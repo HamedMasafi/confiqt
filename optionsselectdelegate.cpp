@@ -6,7 +6,7 @@
 
 OptionsSelectDelegate::OptionsSelectDelegate(QObject *parent) : QItemDelegate(parent)
 {
-
+    setClipping(true);
 }
 
 QWidget *OptionsSelectDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const

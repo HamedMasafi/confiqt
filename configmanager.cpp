@@ -31,6 +31,7 @@ QStringList ConfigManager::selectedModules() const
 void ConfigManager::setSelectedModules(const QStringList &selectedModules)
 {
     _selectedModules = selectedModules;
+    process();
 }
 
 QStringList ConfigManager::platforms() const
@@ -155,23 +156,26 @@ QByteArray ConfigManager::readFile(const QString &path)
     return buffer;
 }
 
-QJsonObject ConfigManager::readConfig(const QString &path)
+void ConfigManager::readConfig(const QString &path, const QString &moduleName)
 {
-    JsonConfig c(path);
+    JsonConfig c(path, moduleName);
     if (!c.isValid()) {
 //        qDebug() << path << "is not valid;";
-        return QJsonObject();
+        return;
     }
     auto o = c.subConfigs();
     if (o.size())
         foreach (QString sub, o) {
-            readConfig(path + sub);
+            readConfig(path + sub, moduleName);
         }
-
 
     _options.append(c.options());
     _features.append(c.features());
-    return QJsonObject();
+}
+
+QStringList ConfigManager::licenses() const
+{
+    return _licenses;
 }
 
 ConfigManager::ConfigManager()
@@ -188,7 +192,8 @@ void ConfigManager::process()
 {
     foreach (QString module, _selectedModules)
         if (_submodules.contains(module))
-            QJsonObject o = readConfig(m_sourcePath + module + "/");
+            readConfig(m_sourcePath + module + "/", module);
+    emit configuresUpdated();
 }
 
 void ConfigManager::setSourcePath(QString sourcePath)
@@ -212,9 +217,18 @@ void ConfigManager::setSourcePath(QString sourcePath)
         if (QFile::exists(proFilePath))
             _submodules.append(match.captured(1));
     }
+    emit modulesUpdated();
 
     QDir mkspec(m_sourcePath + "qtbase/mkspecs/");
     _platforms = mkspec.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
+    emit platformsUpdated();
+
+
+    QDir licenses(m_sourcePath);
+    auto licFiles = licenses.entryList(QStringList() << "LICENSE.*");
+    foreach (QString l, licFiles)
+        _licenses.append(l.replace("LICENSE.", ""));
+    emit licensesUpdated();
 
     emit sourcePathChanged(m_sourcePath);
 }

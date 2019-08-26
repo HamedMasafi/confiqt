@@ -31,7 +31,18 @@ SOURCES += \
         main.cpp \
         optioneditwidget.cpp \
         optionsselectdelegate.cpp \
-        wizard.cpp
+        pagecrosscompile.cpp \
+        pagefeatures.cpp \
+        pagelibs.cpp \
+        pagelicense.cpp \
+        pagemodules.cpp \
+        pageselectbuildmethod.cpp \
+        pageselectpaths.cpp \
+        pageselectplatform.cpp \
+        pagewelcome.cpp \
+        qtconfigwizard.cpp \
+        wizard.cpp \
+        wizardpagebase.cpp
 
 HEADERS += \
         configmanager.h \
@@ -39,10 +50,31 @@ HEADERS += \
         jsonconfig.h \
         optioneditwidget.h \
         optionsselectdelegate.h \
-        wizard.h
+        pagecrosscompile.h \
+        pagefeatures.h \
+        pagelibs.h \
+        pagelicense.h \
+        pagemodules.h \
+        pageselectbuildmethod.h \
+        pageselectpaths.h \
+        pageselectplatform.h \
+        pagewelcome.h \
+        qtconfigwizard.h \
+        wizard.h \
+        wizardpagebase.h
 
 FORMS += \
         optioneditwidget.ui \
+        pagecrosscompile.ui \
+        pagefeatures.ui \
+        pagelibs.ui \
+        pagelicense.ui \
+        pagemodules.ui \
+        pageselectbuildmethod.ui \
+        pageselectpaths.ui \
+        pageselectplatform.ui \
+        pagewelcome.ui \
+        qtconfigwizard.ui \
         wizard.ui
 
 # Default rules for deployment.

@@ -12,6 +12,7 @@ void OptionEditWidget::setValue(const QVariant &value)
     switch (_type) {
     case QVariant::Bool:
         checkBox->setChecked(value.toBool());
+        checkBox->setTristate(false);
         break;
 
     case QVariant::String:
@@ -131,6 +132,23 @@ void OptionEditWidget::on_toolButtonReset_clicked()
         break;
 
     default:
+        break;
+    }
+}
+
+void OptionEditWidget::on_checkBox_stateChanged(int n)
+{
+    switch (static_cast<Qt::CheckState>(n)) {
+    case Qt::Checked:
+        checkBox->setText("true");
+        break;
+
+    case Qt::Unchecked:
+        checkBox->setText("false");
+        break;
+
+    case Qt::PartiallyChecked:
+        checkBox->setText("<Not set>");
         break;
     }
 }

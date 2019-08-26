@@ -9,6 +9,7 @@ struct Option {
     QString name;
     QString type;
     QVariant values;
+    QString moduleName;
 
     QVariant::Type variantType() const {
         if (type == "boolean")
@@ -48,7 +49,11 @@ struct Feature {
     QString label;
     QString purpose;
     QString section;
+    QString moduleName;
+    QStringList condition;
 };
+Q_DECLARE_METATYPE(Feature);
+
 
 class Global
 {

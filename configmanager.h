@@ -26,9 +26,10 @@ class ConfigManager : public QObject
     QList<Feature> _features;
 
     QByteArray readFile(const QString &path);
-    QJsonObject readConfig(const QString &path);
+    void readConfig(const QString &path, const QString &moduleName);
     QMap<QString, Qt::CheckState> _featuresStates;
     QMap<QString, QString> _optionsStates;
+    QStringList _licenses;
 
     QString m_buildPath;
 
@@ -68,6 +69,8 @@ public:
 
     bool useCommercial() const;
 
+    QStringList licenses() const;
+
 public slots:
     void setSourcePath(QString sourcePath);
     void setBuildPath(QString buildPath);
@@ -83,6 +86,11 @@ signals:
     void installPathChanged(QString installPath);
     void confirmLicenseChanged(bool confirmLicense);
     void useCommercialChanged(bool useCommercial);
+
+    void modulesUpdated();
+    void platformsUpdated();
+    void configuresUpdated();
+    void licensesUpdated();
 };
 
 #endif // CONFIGMANAGER_H

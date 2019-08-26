@@ -35,6 +35,7 @@ Wizard::Wizard(QWidget *parent) :
         item->setFlags(item->flags() | Qt::ItemIsEditable);
         item->setCheckState(Qt::Checked);
     }
+
 }
 
 void Wizard::on_pushButtonSelectSourcePath_clicked()
@@ -187,6 +188,11 @@ void Wizard::initializePage(int id)
             auto k = opts.at(i);
             optionsModel->setData(optionsModel->index(i, 0), k.name);
             optionsModel->setData(optionsModel->index(i, 1), k.type);
+            auto item = optionsModel->item(i, 0);
+            item->setFlags(item->flags() & ~Qt::ItemIsEditable);
+            item = optionsModel->item(i, 1);
+            item->setFlags(item->flags() & ~Qt::ItemIsEditable);
+
             optionsModel->setData(optionsModel->index(i, 2), k.createValues(), DropDownRole);
             optionsModel->setData(optionsModel->index(i, 2), static_cast<int>(k.variantType()), TypeRole);
             optionsModel->setData(optionsModel->index(i, 2), QVariant(), Qt::DisplayRole);
@@ -269,17 +275,17 @@ void Wizard::run()
     auto p = _config->createProcess();
     connect(p, &QProcess::readyReadStandardError, [this, p](){
         auto b = p->readAllStandardError();
-        textBrowserBuildOutput->append(b);
+        plainTextEditBuildOutput->appendPlainText(b);
     });
     connect(p, &QProcess::readyReadStandardOutput, [this, p](){
         auto b = p->readAllStandardOutput();
-        textBrowserBuildOutput->append(b);
+        plainTextEditBuildOutput->appendPlainText(b);
     });
     connect(p, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), [this](int code, QProcess::ExitStatus status){
         if (status == QProcess::NormalExit)
-            textBrowserBuildOutput->append("Configure successful");
+            plainTextEditBuildOutput->appendPlainText("Configure successful");
         else
-            textBrowserBuildOutput->append(QString("Configure failed with code: %1").arg(code));
+            plainTextEditBuildOutput->appendPlainText(QString("Configure failed with code: %1").arg(code));
     });
     p->start();
 }

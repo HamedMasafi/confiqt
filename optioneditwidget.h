@@ -22,6 +22,7 @@ public:
 private slots:
     void valueSet();
     void on_toolButtonReset_clicked();
+    void on_checkBox_stateChanged(int arg1);
 };
 
 #endif // OPTIONEDITDELEGATE_H

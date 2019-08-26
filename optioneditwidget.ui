@@ -6,15 +6,18 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>126</width>
-    <height>68</height>
+    <width>139</width>
+    <height>67</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">QCheckBox::indicator {
+   <string notr="true">QCheckBox{
+	background-color: rgb(255, 255, 255);
+}
+QCheckBox::indicator {
 	left: 10px;
 }</string>
   </property>
@@ -50,6 +53,16 @@
       </widget>
      </item>
      <item>
+      <widget class="QLineEdit" name="_lineEdit">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QCheckBox" name="checkBox">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
@@ -59,16 +72,6 @@
        </property>
        <property name="text">
         <string/>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="_lineEdit">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
        </property>
       </widget>
      </item>

@@ -7,8 +7,8 @@
 #include <QJsonObject>
 #include <QVariant>
 
-JsonConfig::JsonConfig(const QString &filePath, QObject *parent)
-    : QObject(parent), _filePath(filePath)
+JsonConfig::JsonConfig(const QString &filePath, const QString &moduleName, QObject *parent)
+    : QObject(parent), _filePath(filePath), _moduleName(moduleName)
 {
     QString p(_filePath);
 
@@ -63,6 +63,7 @@ QList<Option> JsonConfig::options() const
         QJsonValue v = options.value(key);
         Option o;
         o.name = key;
+        o.moduleName = _moduleName;
         if (v.isString())
             o.type = v.toString();
         else if (v.isObject()) {
@@ -88,12 +89,23 @@ QList<Feature> JsonConfig::features() const
         Feature ft;
         ft.name = key;
         QJsonObject obj = f.value(key).toObject();
+
         QJsonValue label = obj.value("label");
         if (label.isString())
             ft.label = label.toString();
 
         ft.purpose = obj.value("purpose").toString();
         ft.section = obj.value("section").toString();
+        ft.moduleName = _moduleName;
+
+        auto condition = obj.value("condition");
+        if (condition.isString())
+            ft.condition = QStringList() << condition.toString();
+        else if (condition.isArray()) {
+            auto vl = condition.toArray().toVariantList();
+            foreach (QVariant v, vl)
+                ft.condition.append(v.toString());
+        }
         ret.append(ft);
     }
     return ret;

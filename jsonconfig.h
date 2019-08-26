@@ -11,9 +11,10 @@ class JsonConfig : public QObject
     Q_OBJECT
     QString _filePath;
     QJsonObject _obj;
+    QString _moduleName;
 
 public:
-    explicit JsonConfig(const QString &filePath, QObject *parent = nullptr);
+    explicit JsonConfig(const QString &filePath, const QString &moduleName, QObject *parent = nullptr);
 
     bool isValid() const;
     QStringList subConfigs() const;
