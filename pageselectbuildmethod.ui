@@ -59,7 +59,13 @@
     </layout>
    </item>
    <item>
-    <widget class="QPlainTextEdit" name="plainTextEditParameteres"/>
+    <widget class="QPlainTextEdit" name="plainTextEditParameteres">
+     <property name="font">
+      <font>
+       <family>Courier 10 Pitch</family>
+      </font>
+     </property>
+    </widget>
    </item>
    <item>
     <spacer name="verticalSpacer">

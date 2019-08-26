@@ -218,6 +218,7 @@ void ConfigManager::setSourcePath(QString sourcePath)
             _submodules.append(match.captured(1));
     }
     emit modulesUpdated();
+    setSelectedModules(_submodules);
 
     QDir mkspec(m_sourcePath + "qtbase/mkspecs/");
     _platforms = mkspec.entryList(QDir::Dirs | QDir::NoDotAndDotDot);

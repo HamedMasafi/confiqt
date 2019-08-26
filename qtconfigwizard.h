@@ -3,16 +3,42 @@
 
 #include "ui_qtconfigwizard.h"
 
+#define FOREACH_PAGES(x) \
+    x(Welcome) \
+    x(SelectPaths) \
+    x(License) \
+    x(SelectPlatform) \
+    x(CrossCompile) \
+    x(Modules) \
+    x(Features) \
+    x(Libs) \
+    x(SelectBuildMethod)
+
+#define x(name) class Page##name;
+    FOREACH_PAGES(x)
+#undef x
+
 class ConfigManager;
 class QtConfigWizard : public QWizard, private Ui::QtConfigWizard
 {
     Q_OBJECT
     ConfigManager *_config;
 
+#define x(name) int _index##name; Page##name *_page##name;
+    FOREACH_PAGES(x)
+#undef x
+
+
+    QList<int> _simpleIds;
 public:
     explicit QtConfigWizard(QWidget *parent = nullptr);
+
 private slots:
     void on_QtConfigWizard_accepted();
+
+    // QWizard interface
+public:
+    int nextId() const;
 };
 
 #endif // QTCONFIGWIZARD_H

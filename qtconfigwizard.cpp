@@ -11,6 +11,8 @@
 #include "pagewelcome.h"
 #include "qtconfigwizard.h"
 
+
+
 QtConfigWizard::QtConfigWizard(QWidget *parent) :
     QWizard(parent)
 {
@@ -18,19 +20,29 @@ QtConfigWizard::QtConfigWizard(QWidget *parent) :
 
     _config = new ConfigManager;
 
-    addPage(new PageWelcome(this));
-    addPage(new PageSelectPaths(_config, this));
-    addPage(new PageLicense(_config, this));
-    addPage(new PageSelectPlatform(_config, this));
-    addPage(new PageCrossCompile(_config, this));
-    addPage(new PageModules(_config, this));
-    addPage(new PageFeatures(_config, this));
-    addPage(new PageLibs(_config, this));
-    addPage(new PageSelectBuildMethod(_config, this));
+#define x(name) _index##name = addPage(new Page##name(_config, this));
+    FOREACH_PAGES(x)
+#undef x
+            _simpleIds << _indexWelcome
+                       << _indexSelectPaths
+                       << _indexLicense
+                       << _indexFeatures
+                       << _indexSelectBuildMethod;
 }
 
 void QtConfigWizard::on_QtConfigWizard_accepted()
 {
     qDebug() << _config->createCommand();
 
+}
+
+int QtConfigWizard::nextId() const
+{
+    if (!field("simpleMode").toBool())
+        return QWizard::nextId();
+
+    if (currentId() == _simpleIds.last())
+        return -1;
+
+    return _simpleIds[_simpleIds.indexOf(currentId()) + 1];
 }

@@ -21,7 +21,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QRadioButton" name="radioButtonBuildNow">
+    <widget class="QRadioButton" name="radioButtonSimpleMode">
      <property name="text">
       <string>Simple mode (Recommanded for newby users)</string>
      </property>
@@ -31,7 +31,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QRadioButton" name="radioButtonBuildLater">
+    <widget class="QRadioButton" name="radioButtonExpertMode">
      <property name="text">
       <string>Advanced mode (For experts)</string>
      </property>

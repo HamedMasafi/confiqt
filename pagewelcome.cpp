@@ -1,7 +1,8 @@
 #include "pagewelcome.h"
 
-PageWelcome::PageWelcome(QWidget *parent) :
-    QWizardPage(parent)
+PageWelcome::PageWelcome(ConfigManager *config, QWidget *parent)
+    : WizardPageBase (config, parent)
 {
     setupUi(this);
+    registerField("simpleMode", radioButtonSimpleMode);
 }
