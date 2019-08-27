@@ -41,11 +41,31 @@ bool FeatureFilterProxy::filterAcceptsRow(int source_row, const QModelIndex &sou
     if (m_searchName.isEmpty() && m_moduleName.isEmpty())
         return true;
 
-    QModelIndex index0 = sourceModel()->index(source_row, 0, source_parent);
-    FeatureTreeNodeType type = static_cast<FeatureTreeNodeType>(sourceModel()->data(index0, TypeRole).toInt());
+    QModelIndex index = sourceModel()->index(source_row, 0, source_parent);
+    return hasToBeDisplayed(index);
+}
 
-    if (type == FeatureTreeNodeType::Module && !m_moduleName.isEmpty())
-        return sourceModel()->data(index0).toString() == m_moduleName;
+bool FeatureFilterProxy::hasToBeDisplayed(const QModelIndex index) const
+{
+    FeatureTreeNodeType type = static_cast<FeatureTreeNodeType>(sourceModel()->data(index, TypeRole).toInt());
+    bool result = false;
+
+    if (type == FeatureTreeNodeType::Module || type == FeatureTreeNodeType::Section) {
+        if (type == FeatureTreeNodeType::Module
+                && !m_moduleName.isEmpty()
+                && sourceModel()->data(index).toString() != m_moduleName)
+            return false;
+        for( int i = 0; i < sourceModel()->rowCount(index); i++)
+        {
+            QModelIndex childIndex = sourceModel()->index(i, 0, index);
+            if (!childIndex.isValid())
+                break;
+            result = hasToBeDisplayed(childIndex);
+            if (result)
+                break;
+        }
+        return result;
+    }
 
     if (type != FeatureTreeNodeType::Feature)
         return true;
@@ -53,7 +73,8 @@ bool FeatureFilterProxy::filterAcceptsRow(int source_row, const QModelIndex &sou
     if (m_searchName.isEmpty())
         return true;
 
-    QVariant v = sourceModel()->data(index0, DataRole);
+    QVariant v = sourceModel()->data(index, DataRole);
     Feature ft = v.value<Feature>();
-    return ft.name.contains(m_searchName);
+    return ft.name.contains(m_searchName, Qt::CaseInsensitive);
+
 }

@@ -14,6 +14,7 @@ class FeatureFilterProxy : public QSortFilterProxyModel
 
     QString m_moduleName;
 
+    bool hasToBeDisplayed(const QModelIndex index) const;
 public:
     FeatureFilterProxy(QObject *parent = nullptr);
 

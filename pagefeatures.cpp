@@ -204,6 +204,5 @@ void PageFeatures::on_lineEditFilterFeature_textChanged(const QString &s)
 
 void PageFeatures::on_comboBoxModules_currentTextChanged(const QString &s)
 {
-    qDebug() << s;
     featuresFilter->setModuleName(s);
 }
