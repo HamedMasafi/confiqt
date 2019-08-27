@@ -54,6 +54,18 @@ struct Feature {
 };
 Q_DECLARE_METATYPE(Feature);
 
+enum Roles {
+    CheckStateRole = Qt::UserRole,
+    DropDownRole,
+    TypeRole,
+    DataRole
+};
+
+enum class FeatureTreeNodeType {
+    Module,
+    Section,
+    Feature
+};
 
 class Global
 {

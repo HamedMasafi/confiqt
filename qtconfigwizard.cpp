@@ -9,6 +9,7 @@
 #include "pageselectpaths.h"
 #include "pageselectplatform.h"
 #include "pagewelcome.h"
+#include "pagenomake.h"
 #include "qtconfigwizard.h"
 
 
@@ -33,7 +34,6 @@ QtConfigWizard::QtConfigWizard(QWidget *parent) :
 void QtConfigWizard::on_QtConfigWizard_accepted()
 {
     qDebug() << _config->createCommand();
-
 }
 
 int QtConfigWizard::nextId() const

@@ -1,7 +1,8 @@
+#include "featurefilterproxy.h"
 #include "pagefeatures.h"
+#include "global.h"
 
 #include <QKeyEvent>
-#include <QSortFilterProxyModel>
 #include <QStandardItemModel>
 
 PageFeatures::PageFeatures(ConfigManager *config, QWidget *parent)
@@ -10,7 +11,7 @@ PageFeatures::PageFeatures(ConfigManager *config, QWidget *parent)
     setupUi(this);
 
     featuresModel = new QStandardItemModel(this);
-    featuresFilter = new QSortFilterProxyModel(this);
+    featuresFilter = new FeatureFilterProxy(this);
     featuresFilter->setFilterKeyColumn(0);
     treeView->setModel(featuresFilter);
     treeView->installEventFilter(this);
@@ -20,9 +21,25 @@ PageFeatures::PageFeatures(ConfigManager *config, QWidget *parent)
 
 void PageFeatures::config_configuresUpdated()
 {
+    comboBoxModules->clear();
+    comboBoxModules->addItem("");
+    comboBoxModules->addItems(_config->selectedModules());
+
     QList<Feature> opts = _config->features();
     std::sort(opts.begin(), opts.end(), [](const Feature &l, const Feature &r) -> bool{
-        return l.moduleName < r.moduleName && l.section < r.section;
+        if (l.moduleName < r.moduleName)
+            return true;
+        if (l.moduleName == r.moduleName) {
+            if (l.section.isEmpty() || r.section.isEmpty())
+                return l.section.size() > r.section.size();
+
+            if (l.section < r.section)
+                return true;
+
+            if (l.section == r.section)
+                return l.name < r.name;
+        }
+        return false;
     });
 
     QMap<QString, QStandardItem*> rootItems;
@@ -39,12 +56,14 @@ void PageFeatures::config_configuresUpdated()
         } else {
             moduleItem = new QStandardItem(k.moduleName);
             moduleItem->setColumnCount(2);
+            moduleItem->setData(static_cast<int>(FeatureTreeNodeType::Module), TypeRole);
             rootItems.insert(k.moduleName, moduleItem);
             featuresModel->appendRow(moduleItem);
         }
 
         QStandardItem *item = new QStandardItem(k.name);
         item->setData(QVariant::fromValue(k), DataRole);
+        item->setData(static_cast<int>(FeatureTreeNodeType::Feature), TypeRole);
 
         QStandardItem *checkItem = new QStandardItem;
         checkItem->setData(Qt::PartiallyChecked, CheckStateRole);
@@ -62,6 +81,7 @@ void PageFeatures::config_configuresUpdated()
             }
             if (sectionItem == nullptr) {
                 sectionItem = new QStandardItem(k.section);
+                sectionItem->setData(static_cast<int>(FeatureTreeNodeType::Section), TypeRole);
                 sectionItem->setColumnCount(2);
                 moduleItem->appendRow(sectionItem);
             }
@@ -173,10 +193,17 @@ void PageFeatures::on_treeView_activated(const QModelIndex &index)
         labelLabel->setText(ft.label);
         labelSection->setText(ft.section);
         labelPurpose->setText(ft.purpose);
+        labelCondition->setText(ft.condition.join(" & "));
     }
 }
 
 void PageFeatures::on_lineEditFilterFeature_textChanged(const QString &s)
 {
-    featuresFilter->setFilterFixedString(s);
+    featuresFilter->setSearchName(s);
+}
+
+void PageFeatures::on_comboBoxModules_currentTextChanged(const QString &s)
+{
+    qDebug() << s;
+    featuresFilter->setModuleName(s);
 }

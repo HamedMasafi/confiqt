@@ -14,6 +14,10 @@ public:
     // QWizardPage interface
 public:
     bool validatePage();
+private slots:
+    void on_pushButtonSelectSourcePath_clicked();
+    void on_pushButtonSelectBuildPath_clicked();
+    void on_pushButtonSelectInstallPath_clicked();
 };
 
 #endif // PAGESELECTPATHS_H

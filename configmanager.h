@@ -24,6 +24,7 @@ class ConfigManager : public QObject
     QStringList _platforms;
     QList<Option> _options;
     QList<Feature> _features;
+    QStringList _nomake;
 
     QByteArray readFile(const QString &path);
     void readConfig(const QString &path, const QString &moduleName);
@@ -70,6 +71,8 @@ public:
     bool useCommercial() const;
 
     QStringList licenses() const;
+
+    QStringList nomake() const;
 
 public slots:
     void setSourcePath(QString sourcePath);

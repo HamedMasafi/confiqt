@@ -4,14 +4,14 @@
 #include "ui_pagefeatures.h"
 #include "wizardpagebase.h"
 
-class QSortFilterProxyModel;
+class FeatureFilterProxy;
 class QStandardItemModel;
 class QStandardItem;
 class PageFeatures : public WizardPageBase, private Ui::PageFeatures
 {
     Q_OBJECT
 
-    QSortFilterProxyModel *featuresFilter;
+    FeatureFilterProxy *featuresFilter;
     QStandardItemModel *featuresModel;
 
     void checkItem(QStandardItem *item);
@@ -29,6 +29,8 @@ private slots:
     void on_treeView_activated(const QModelIndex &index);
 
     void on_lineEditFilterFeature_textChanged(const QString &arg1);
+
+    void on_comboBoxModules_currentTextChanged(const QString &arg1);
 
 public:
     bool eventFilter(QObject *watched, QEvent *event);

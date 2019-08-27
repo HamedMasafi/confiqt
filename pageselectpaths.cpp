@@ -2,6 +2,7 @@
 #include "configmanager.h"
 
 #include <QDir>
+#include <QFileDialog>
 #include <QMessageBox>
 
 PageSelectPaths::PageSelectPaths(ConfigManager *config, QWidget *parent)
@@ -49,4 +50,25 @@ bool PageSelectPaths::validatePage()
     _config->setInstallPath(lineEditInstallPath->text());
 
     return true;
+}
+
+void PageSelectPaths::on_pushButtonSelectSourcePath_clicked()
+{
+    QString path = QFileDialog::getExistingDirectory(this, QString(), lineEditSourcePath->text());
+    if (path != QString())
+        lineEditSourcePath->setText(path);
+}
+
+void PageSelectPaths::on_pushButtonSelectBuildPath_clicked()
+{
+    QString path = QFileDialog::getExistingDirectory(this, QString(), lineEditBuildPath->text());
+    if (path != QString())
+        lineEditBuildPath->setText(path);
+}
+
+void PageSelectPaths::on_pushButtonSelectInstallPath_clicked()
+{
+    QString path = QFileDialog::getExistingDirectory(this, QString(), lineEditInstallPath->text());
+    if (path != QString())
+        lineEditInstallPath->setText(path);
 }

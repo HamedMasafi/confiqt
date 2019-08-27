@@ -26,6 +26,7 @@ CONFIG += c++11
 
 SOURCES += \
         configmanager.cpp \
+        featurefilterproxy.cpp \
         global.cpp \
         jsonconfig.cpp \
         main.cpp \
@@ -36,6 +37,7 @@ SOURCES += \
         pagelibs.cpp \
         pagelicense.cpp \
         pagemodules.cpp \
+        pagenomake.cpp \
         pageselectbuildmethod.cpp \
         pageselectpaths.cpp \
         pageselectplatform.cpp \
@@ -46,6 +48,7 @@ SOURCES += \
 
 HEADERS += \
         configmanager.h \
+        featurefilterproxy.h \
         global.h \
         jsonconfig.h \
         optioneditwidget.h \
@@ -55,6 +58,7 @@ HEADERS += \
         pagelibs.h \
         pagelicense.h \
         pagemodules.h \
+        pagenomake.h \
         pageselectbuildmethod.h \
         pageselectpaths.h \
         pageselectplatform.h \
@@ -70,6 +74,7 @@ FORMS += \
         pagelibs.ui \
         pagelicense.ui \
         pagemodules.ui \
+        pagenomake.ui \
         pageselectbuildmethod.ui \
         pageselectpaths.ui \
         pageselectplatform.ui \

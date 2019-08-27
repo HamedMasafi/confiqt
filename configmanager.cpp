@@ -97,6 +97,10 @@ QStringList ConfigManager::createCommand() const
         args << "-skip"
              << module;
 
+    foreach (QString nm, _nomake)
+        args << "-nomake"
+             << nm;
+
     auto itFeatures = _featuresStates.begin();
     while (itFeatures != _featuresStates.end()) {
         switch (itFeatures.value()) {
@@ -142,6 +146,11 @@ QProcess *ConfigManager::createProcess() const
 void ConfigManager::clearFeatureStates()
 {
     _featuresStates.clear();
+}
+
+QStringList ConfigManager::nomake() const
+{
+    return _nomake;
 }
 
 QByteArray ConfigManager::readFile(const QString &path)
@@ -206,6 +215,7 @@ void ConfigManager::setSourcePath(QString sourcePath)
     else
         m_sourcePath = sourcePath + "/";
 
+    // Read modules
     QByteArray b = readFile(m_sourcePath + ".gitmodules");
     QRegularExpression r("\\[submodule \"(\\w+)\"\\]");
     _submodules.clear();
@@ -220,11 +230,12 @@ void ConfigManager::setSourcePath(QString sourcePath)
     emit modulesUpdated();
     setSelectedModules(_submodules);
 
+    // Read platforms
     QDir mkspec(m_sourcePath + "qtbase/mkspecs/");
     _platforms = mkspec.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
     emit platformsUpdated();
 
-
+    // Read licenses
     QDir licenses(m_sourcePath);
     auto licFiles = licenses.entryList(QStringList() << "LICENSE.*");
     foreach (QString l, licFiles)
@@ -239,7 +250,42 @@ void ConfigManager::setBuildPath(QString buildPath)
     if (m_buildPath == buildPath)
         return;
 
-    m_buildPath = buildPath;
+    if (buildPath.endsWith("/"))
+        m_buildPath = buildPath;
+    else
+        m_buildPath = buildPath + "/";
+    // Read configurations
+    QFile optFile(m_buildPath);
+    if (optFile.open(QIODevice::Text | QIODevice::ReadOnly)) {
+
+        QList<QByteArray> opts = optFile.readAll().split('\n');
+        optFile.close();
+
+        _selectedModules = _submodules;
+        setConfirmLicense(opts.contains("-confirm-license"));
+        setUseCommercial(!opts.contains("-opensource"));
+        while (opts.count()) {
+            auto ba = opts.takeFirst();
+
+            if (ba.startsWith("-no-feature-"))
+                setFeatureState(ba.replace("-no-feature-", ""), Qt::Unchecked);
+            if (ba.startsWith("-no-feature-"))
+                setFeatureState(ba.replace("-feature-", ""), Qt::Checked);
+
+            if (ba == "-skip") {
+                ba = opts.takeFirst();
+                _selectedModules.removeOne(ba);
+                continue;
+            }
+            if (ba == "-nomake") {
+                ba = opts.takeFirst();
+                _nomake.append(ba);
+                continue;
+            }
+
+        }
+    }
+
     emit buildPathChanged(m_buildPath);
 }
 

@@ -10,6 +10,7 @@
     x(SelectPlatform) \
     x(CrossCompile) \
     x(Modules) \
+    x(NoMake) \
     x(Features) \
     x(Libs) \
     x(SelectBuildMethod)

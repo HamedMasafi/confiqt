@@ -29,12 +29,6 @@ protected:
     ConfigManager *_config;
 
 public:
-    enum Roles {
-        CheckStateRole = Qt::UserRole,
-        DropDownRole,
-        TypeRole,
-        DataRole
-    };
 
     WizardPageBase(ConfigManager *config, QWidget *parent = nullptr);
 
