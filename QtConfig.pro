@@ -34,10 +34,12 @@ SOURCES += \
         optionsselectdelegate.cpp \
         pagecrosscompile.cpp \
         pagefeatures.cpp \
+        pagefinish.cpp \
         pagelibs.cpp \
         pagelicense.cpp \
         pagemodules.cpp \
         pagenomake.cpp \
+        pagerun.cpp \
         pageselectbuildmethod.cpp \
         pageselectpaths.cpp \
         pageselectplatform.cpp \
@@ -55,10 +57,12 @@ HEADERS += \
         optionsselectdelegate.h \
         pagecrosscompile.h \
         pagefeatures.h \
+        pagefinish.h \
         pagelibs.h \
         pagelicense.h \
         pagemodules.h \
         pagenomake.h \
+        pagerun.h \
         pageselectbuildmethod.h \
         pageselectpaths.h \
         pageselectplatform.h \
@@ -71,10 +75,12 @@ FORMS += \
         optioneditwidget.ui \
         pagecrosscompile.ui \
         pagefeatures.ui \
+        pagefinish.ui \
         pagelibs.ui \
         pagelicense.ui \
         pagemodules.ui \
         pagenomake.ui \
+        pagerun.ui \
         pageselectbuildmethod.ui \
         pageselectpaths.ui \
         pageselectplatform.ui \

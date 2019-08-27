@@ -12,6 +12,11 @@ public:
     explicit PageSelectBuildMethod(ConfigManager *config, QWidget *parent = nullptr);
 private slots:
     void on_pushButtonShowParameteres_clicked();
+
+    // QWizardPage interface
+public:
+    int nextId() const;
+    bool validatePage();
 };
 
 #endif // PAGESELECTBUILDMETHOD_H

@@ -35,7 +35,7 @@ public:
     ConfigManager *config() const;
     void setConfig(ConfigManager *config);
 
-    Q_ALWAYS_INLINE QtConfigWizard *wizard() const;
+    QtConfigWizard *wizard() const;
 };
 
 #endif // WIZARDPAGEBASE_H

@@ -13,7 +13,9 @@
     x(NoMake) \
     x(Features) \
     x(Libs) \
-    x(SelectBuildMethod)
+    x(SelectBuildMethod) \
+    x(Run) \
+    x(Finish)
 
 #define x(name) class Page##name;
     FOREACH_PAGES(x)
@@ -25,13 +27,14 @@ class QtConfigWizard : public QWizard, private Ui::QtConfigWizard
     Q_OBJECT
     ConfigManager *_config;
 
+    QList<int> _simpleIds;
+
+
+public:
 #define x(name) int _index##name; Page##name *_page##name;
     FOREACH_PAGES(x)
 #undef x
 
-
-    QList<int> _simpleIds;
-public:
     explicit QtConfigWizard(QWidget *parent = nullptr);
 
 private slots:

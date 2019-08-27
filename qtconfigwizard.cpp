@@ -10,6 +10,8 @@
 #include "pageselectplatform.h"
 #include "pagewelcome.h"
 #include "pagenomake.h"
+#include "pagerun.h"
+#include "pagefinish.h"
 #include "qtconfigwizard.h"
 
 
@@ -21,14 +23,19 @@ QtConfigWizard::QtConfigWizard(QWidget *parent) :
 
     _config = new ConfigManager;
 
-#define x(name) _index##name = addPage(new Page##name(_config, this));
+#define x(name) \
+        _page##name = new Page##name(_config, this); \
+        _index##name = addPage(_page##name);
+
     FOREACH_PAGES(x)
 #undef x
             _simpleIds << _indexWelcome
                        << _indexSelectPaths
                        << _indexLicense
                        << _indexFeatures
-                       << _indexSelectBuildMethod;
+                       << _indexSelectBuildMethod
+                       << _indexRun
+                       << _indexFinish;
 }
 
 void QtConfigWizard::on_QtConfigWizard_accepted()
@@ -38,6 +45,7 @@ void QtConfigWizard::on_QtConfigWizard_accepted()
 
 int QtConfigWizard::nextId() const
 {
+
     if (!field("simpleMode").toBool())
         return QWizard::nextId();
 
