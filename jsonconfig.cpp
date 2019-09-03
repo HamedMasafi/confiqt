@@ -65,10 +65,10 @@ QList<Option> JsonConfig::options() const
         o.name = key;
         o.moduleName = _moduleName;
         if (v.isString())
-            o.type = v.toString();
+            o.setType(v.toString());
         else if (v.isObject()) {
             QJsonObject obj = v.toObject();
-            o.type = obj.value("type").toString();
+            o.setType(obj.value("type").toString());
 
             QVariant vv = obj.value("values").toVariant();
             o.values = vv;

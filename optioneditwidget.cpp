@@ -10,16 +10,16 @@ void OptionEditWidget::setValue(const QVariant &value)
     }
 
     switch (_type) {
-    case QVariant::Bool:
+    case Option::Bool:
         checkBox->setChecked(value.toBool());
         checkBox->setTristate(false);
         break;
 
-    case QVariant::String:
+    case Option::String:
         _lineEdit->setText(value.toString());
         break;
 
-    case QVariant::List:
+    case Option::Enum:
         _comboBox->setCurrentText(value.toString());
         break;
 
@@ -34,15 +34,17 @@ QVariant OptionEditWidget::value() const
         return QVariant();
 
     switch (_type) {
-    case QVariant::Bool:
+    case Option::Bool:
         if (checkBox->checkState() == Qt::PartiallyChecked)
             return QVariant();
         return checkBox->isChecked();
 
-    case QVariant::String:
+    case Option::String:
+    case Option::AddString:
+    case Option::OptionalString:
         return _lineEdit->text();
 
-    case QVariant::List:
+    case Option::Enum:
         return _comboBox->currentText();
 
     default:
@@ -55,39 +57,41 @@ void OptionEditWidget::valueSet()
     reseted = false;
 }
 
-QVariant::Type OptionEditWidget::type() const
+Option::Type OptionEditWidget::type() const
 {
     return _type;
 }
 
-void OptionEditWidget::setType(const QVariant::Type &type)
+void OptionEditWidget::setType(const Option::Type &type)
 {
     _type = type;
     reseted =  false;
 
     switch (type) {
-    case QVariant::Bool:
+    case Option::Bool:
         checkBox->show();
         _lineEdit->hide();
         _comboBox->hide();
         toolButtonReset->show();
         break;
 
-    case QVariant::String:
+    case Option::String:
+    case Option::AddString:
+    case Option::OptionalString:
         checkBox->hide();
         _lineEdit->show();
         _comboBox->hide();
         toolButtonReset->show();
         break;
 
-    case QVariant::List:
+    case Option::Enum:
         checkBox->hide();
         _lineEdit->hide();
         _comboBox->show();
         toolButtonReset->show();
         break;
 
-    case QVariant::Invalid:
+    case Option::Void:
         checkBox->hide();
         _lineEdit->hide();
         _comboBox->hide();
@@ -119,15 +123,15 @@ void OptionEditWidget::on_toolButtonReset_clicked()
 {
     reseted = true;
     switch (_type) {
-    case QVariant::Bool:
+    case Option::Bool:
         checkBox->setCheckState(Qt::PartiallyChecked);
         break;
 
-    case QVariant::String:
+    case Option::String:
         _lineEdit->clear();
         break;
 
-    case QVariant::List:
+    case Option::Enum:
         _comboBox->setCurrentIndex(-1);
         break;
 

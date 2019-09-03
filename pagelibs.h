@@ -18,6 +18,8 @@ public:
 private slots:
     void config_configuresUpdated();
 
+    void on_lineEditFilterOption_textChanged(const QString &arg1);
+
 public:
     bool validatePage();
 };

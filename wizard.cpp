@@ -194,7 +194,7 @@ void Wizard::initializePage(int id)
             item->setFlags(item->flags() & ~Qt::ItemIsEditable);
 
             optionsModel->setData(optionsModel->index(i, 2), k.createValues(), DropDownRole);
-            optionsModel->setData(optionsModel->index(i, 2), static_cast<int>(k.variantType()), TypeRole);
+            optionsModel->setData(optionsModel->index(i, 2), static_cast<int>(k.type), TypeRole);
             optionsModel->setData(optionsModel->index(i, 2), QVariant(), Qt::DisplayRole);
         }
         optionsFilter->setSourceModel(optionsModel);

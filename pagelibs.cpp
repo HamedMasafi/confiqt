@@ -29,14 +29,14 @@ void PageLibs::config_configuresUpdated()
     for (int i = 0; i < opts.count(); ++i) {
         auto k = opts.at(i);
         optionsModel->setData(optionsModel->index(i, 0), k.name);
-        optionsModel->setData(optionsModel->index(i, 1), k.type);
+        optionsModel->setData(optionsModel->index(i, 1), k.typeString);
         auto item = optionsModel->item(i, 0);
         item->setFlags(item->flags() & ~Qt::ItemIsEditable);
         item = optionsModel->item(i, 1);
         item->setFlags(item->flags() & ~Qt::ItemIsEditable);
 
         optionsModel->setData(optionsModel->index(i, 2), k.createValues(), DropDownRole);
-        optionsModel->setData(optionsModel->index(i, 2), static_cast<int>(k.variantType()), TypeRole);
+        optionsModel->setData(optionsModel->index(i, 2), static_cast<int>(k.type), TypeRole);
         optionsModel->setData(optionsModel->index(i, 2), QVariant(), Qt::DisplayRole);
     }
     optionsFilter->setSourceModel(optionsModel);
@@ -53,4 +53,9 @@ bool PageLibs::validatePage()
             _config->setOptionsState(name, state);
     }
     return true;
+}
+
+void PageLibs::on_lineEditFilterOption_textChanged(const QString &s)
+{
+    optionsFilter->setFilterFixedString(s);
 }

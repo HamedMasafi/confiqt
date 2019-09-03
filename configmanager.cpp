@@ -78,8 +78,7 @@ QStringList ConfigManager::createCommand() const
 {
     QStringList args;
 
-    args << "-prefix"
-         << m_installPath;
+    args << "-prefix " + m_installPath;
 
     if (m_useCommercial)
         args << "-commercial";
@@ -94,12 +93,10 @@ QStringList ConfigManager::createCommand() const
         modules.removeAll(selectedModule);
 
     foreach (QString module, modules)
-        args << "-skip"
-             << module;
+        args << "-skip " + module;
 
     foreach (QString nm, _nomake)
-        args << "-nomake"
-             << nm;
+        args << "-nomake " + nm;
 
     auto itFeatures = _featuresStates.begin();
     while (itFeatures != _featuresStates.end()) {

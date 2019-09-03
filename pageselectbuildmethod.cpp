@@ -11,7 +11,7 @@ PageSelectBuildMethod::PageSelectBuildMethod(ConfigManager *config, QWidget *par
 void PageSelectBuildMethod::on_pushButtonShowParameteres_clicked()
 {
     plainTextEditParameteres->show();
-    plainTextEditParameteres->setPlainText(_config->createCommand().join(" "));
+    plainTextEditParameteres->setPlainText(_config->createCommand().join(" \\\n\t"));
 }
 
 int PageSelectBuildMethod::nextId() const

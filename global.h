@@ -6,28 +6,66 @@
 #include <QVariantMap>
 
 struct Option {
+    enum Type {
+        Unknown,
+        Bool,
+        Enum,
+        String,
+        OptionalString,
+        AddString,
+        Void
+    };
     QString name;
-    QString type;
+    Type type;
+    QString typeString;
     QVariant values;
     QString moduleName;
 
-    QVariant::Type variantType() const {
-        if (type == "boolean")
-            return QVariant::Bool;
 
-        if (type == "enum")
-            return QVariant::List;
+    void setType(const QString &typeString) {
+        type = Unknown;
+        if (typeString == "boolean")
+            type = Bool;
 
-        if (type == "optionalString" || type == "string")
-            return QVariant::String;
+        if (typeString == "enum")
+            type = Enum;
 
-        if (type == "void")
-            return QVariant::Invalid;
+        if (typeString == "string")
+            type = String;
 
-        return QVariant::String;
+        if (typeString == "optionalString")
+            type = OptionalString;
+
+        if (typeString == "addString")
+            type = AddString;
+
+        if (typeString == "void")
+            type =  Void;
+
+        this->typeString = typeString;
     }
+
+//    QVariant::Type variantType() const {
+//        if (type == "boolean")
+//            return QVariant::Bool;
+
+//        if (type == "enum")
+//            return QVariant::List;
+
+//        if (type == "optionalString" || type == "string")
+//            return QVariant::String;
+
+//        if (type == "addString")
+//            return QVariant::StringList;
+
+
+//        if (type == "void")
+//            return QVariant::Invalid;
+
+//        return QVariant::String;
+//    }
     QVariant createValues() {
-        if (type == "enum") {
+        if (type == Enum) {
             QVariantList list;
             if (values.type() == QVariant::Map) {
                 auto keys = values.toMap().keys();
