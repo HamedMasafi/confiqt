@@ -24,69 +24,73 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 CONFIG += c++11
 
+INCLUDEPATH += config models ui pages
+
 SOURCES += \
-        configmanager.cpp \
-        featurefilterproxy.cpp \
+        config/configmanager.cpp \
+        models/featurefilterproxy.cpp \
         global.cpp \
-        jsonconfig.cpp \
+        config/jsonconfig.cpp \
         main.cpp \
-        optioneditwidget.cpp \
-        optionsselectdelegate.cpp \
-        pagecrosscompile.cpp \
-        pagefeatures.cpp \
-        pagefinish.cpp \
-        pagelibs.cpp \
-        pagelicense.cpp \
-        pagemodules.cpp \
-        pagenomake.cpp \
-        pagerun.cpp \
-        pageselectbuildmethod.cpp \
-        pageselectpaths.cpp \
-        pageselectplatform.cpp \
-        pagewelcome.cpp \
-        qtconfigwizard.cpp \
-        wizard.cpp \
-        wizardpagebase.cpp
+        ui/optioneditwidget.cpp \
+        ui/optionsselectdelegate.cpp \
+        pages/pagecrosscompile.cpp \
+        pages/pagefeatures.cpp \
+        pages/pagefinish.cpp \
+        pages/pagelibs.cpp \
+        pages/pagelicense.cpp \
+        pages/pagemodules.cpp \
+        pages/pagenomake.cpp \
+        pages/pagerun.cpp \
+        pages/pageselectbuildmethod.cpp \
+        pages/pageselectpaths.cpp \
+        pages/pageselectplatform.cpp \
+        pages/pagewelcome.cpp \
+        ui/plaintextcombobox.cpp \
+        ui/qtconfigwizard.cpp \
+        ui/saveconfirmdialog.cpp \
+        pages/wizardpagebase.cpp
 
 HEADERS += \
-        configmanager.h \
-        featurefilterproxy.h \
+        config/configmanager.h \
+        models/featurefilterproxy.h \
         global.h \
-        jsonconfig.h \
-        optioneditwidget.h \
-        optionsselectdelegate.h \
-        pagecrosscompile.h \
-        pagefeatures.h \
-        pagefinish.h \
-        pagelibs.h \
-        pagelicense.h \
-        pagemodules.h \
-        pagenomake.h \
-        pagerun.h \
-        pageselectbuildmethod.h \
-        pageselectpaths.h \
-        pageselectplatform.h \
-        pagewelcome.h \
-        qtconfigwizard.h \
-        wizard.h \
-        wizardpagebase.h
+        config/jsonconfig.h \
+        ui/optioneditwidget.h \
+        ui/optionsselectdelegate.h \
+        pages/pagecrosscompile.h \
+        pages/pagefeatures.h \
+        pages/pagefinish.h \
+        pages/pagelibs.h \
+        pages/pagelicense.h \
+        pages/pagemodules.h \
+        pages/pagenomake.h \
+        pages/pagerun.h \
+        pages/pageselectbuildmethod.h \
+        pages/pageselectpaths.h \
+        pages/pageselectplatform.h \
+        pages/pagewelcome.h \
+        ui/plaintextcombobox.h \
+        ui/qtconfigwizard.h \
+        ui/saveconfirmdialog.h \
+        pages/wizardpagebase.h
 
 FORMS += \
-        optioneditwidget.ui \
-        pagecrosscompile.ui \
-        pagefeatures.ui \
-        pagefinish.ui \
-        pagelibs.ui \
-        pagelicense.ui \
-        pagemodules.ui \
-        pagenomake.ui \
-        pagerun.ui \
-        pageselectbuildmethod.ui \
-        pageselectpaths.ui \
-        pageselectplatform.ui \
-        pagewelcome.ui \
-        qtconfigwizard.ui \
-        wizard.ui
+        ui/optioneditwidget.ui \
+        pages/pagecrosscompile.ui \
+        pages/pagefeatures.ui \
+        pages/pagefinish.ui \
+        pages/pagelibs.ui \
+        pages/pagelicense.ui \
+        pages/pagemodules.ui \
+        pages/pagenomake.ui \
+        pages/pagerun.ui \
+        pages/pageselectbuildmethod.ui \
+        pages/pageselectpaths.ui \
+        pages/pageselectplatform.ui \
+        pages/pagewelcome.ui \
+        ui/qtconfigwizard.ui \
+        ui/saveconfirmdialog.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

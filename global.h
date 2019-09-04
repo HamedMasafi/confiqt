@@ -90,7 +90,7 @@ struct Feature {
     QString moduleName;
     QStringList condition;
 };
-Q_DECLARE_METATYPE(Feature);
+Q_DECLARE_METATYPE(Feature*);
 
 enum Roles {
     CheckStateRole = Qt::UserRole,
