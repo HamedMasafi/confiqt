@@ -1,4 +1,5 @@
 #include <QDebug>
+#include <QMessageBox>
 
 #include "pages/pagecrosscompile.h"
 #include "pages/pagefeatures.h"
@@ -37,6 +38,23 @@ QtConfigWizard::QtConfigWizard(QWidget *parent) :
                        << _indexSelectBuildMethod
                        << _indexRun
                        << _indexFinish;
+/* TODO: enable this later
+    setOption(QWizard::HaveCustomButton1);
+    setButtonText(QWizard::CustomButton1, "About...");
+
+    setButtonLayout(QList<QWizard::WizardButton>()
+                    << QWizard::CustomButton1
+                    << QWizard::Stretch
+                    << QWizard::BackButton
+                    << QWizard::NextButton
+                    << QWizard::CancelButton);
+
+    connect(this, &QWizard::customButtonClicked, [this](int which){
+        if (which == QWizard::CustomButton1)
+            QMessageBox::information(this, tr("About"),
+                                     tr("Some description goes here"));
+    });
+*/
 }
 
 void QtConfigWizard::on_QtConfigWizard_accepted()

@@ -23,6 +23,9 @@ void OptionsSelectDelegate::setEditorData(QWidget *editor, const QModelIndex &in
     QVariant dropDown = index.data(DropDownRole);
     QVariant data = index.data(Qt::DisplayRole);
 
+    if (type == Option::AddString)
+        qDebug() << dropDown;
+
     w->setType(type);
     w->setDropDown(dropDown);
     w->setValue(data);

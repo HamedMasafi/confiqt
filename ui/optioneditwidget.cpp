@@ -1,4 +1,5 @@
 #include <QDebug>
+#include <QListWidget>
 #include <QPainter>
 #include <QPlainTextEdit>
 
@@ -8,6 +9,9 @@ OptionEditWidget::OptionEditWidget(QWidget *parent) :
     QWidget(parent), reseted(false)
 {
     setupUi(this);
+    checkableListWidget = new QListWidget(this);
+    comboBoxCheckable->setModel(checkableListWidget->model());
+    comboBoxCheckable->setView(checkableListWidget);
 }
 
 QVariant OptionEditWidget::value() const
@@ -116,10 +120,24 @@ void OptionEditWidget::setType(const Option::Type &type)
 void OptionEditWidget::setDropDown(const QVariant &dropDownData)
 {
     if (dropDownData.type() == QVariant::List) {
-        _comboBox->clear();
-        auto list = dropDownData.toList();
-        foreach (QVariant v, list)
-            _comboBox->addItem(v.toString());
+        if (_type == Option::Enum) {
+            _comboBox->clear();
+            auto list = dropDownData.toList();
+            foreach (QVariant v, list)
+                _comboBox->addItem(v.toString());
+        }
+        if (_type == Option::AddString) {
+            checkableListWidget->clear();
+            auto list = dropDownData.toList();
+            foreach (QVariant v, list) {
+                auto item = new QListWidgetItem(checkableListWidget);
+                item->setText(v.toString());
+                item->setFlags(item->flags() | Qt::ItemIsSelectable);
+                item->setCheckState(Qt::Unchecked);
+                checkableListWidget->addItem(item);
+            }
+            stackedWidget->setCurrentWidget(pageStringsSelection);
+        }
     }
 }
 

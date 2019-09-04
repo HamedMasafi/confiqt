@@ -65,7 +65,7 @@ struct Option {
 //        return QVariant::String;
 //    }
     QVariant createValues() {
-        if (type == Enum) {
+        if (type == Enum || type == AddString) {
             QVariantList list;
             if (values.type() == QVariant::Map) {
                 auto keys = values.toMap().keys();

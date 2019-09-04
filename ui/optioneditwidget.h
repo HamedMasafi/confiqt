@@ -4,11 +4,13 @@
 #include "ui_optioneditwidget.h"
 #include "global.h"
 
+class QListWidget;
 class OptionEditWidget : public QWidget, private Ui::OptionEditWidget
 {
     Q_OBJECT
     bool reseted;
     Option::Type _type;
+    QListWidget *checkableListWidget;
 
 public:
     explicit OptionEditWidget(QWidget *parent = nullptr);
