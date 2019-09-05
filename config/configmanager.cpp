@@ -7,6 +7,7 @@
 #include <QJsonDocument>
 #include <QProcess>
 #include <QRegularExpression>
+#include <QSysInfo>
 
 QList<Option*> ConfigManager::options() const
 {
@@ -136,6 +137,79 @@ void ConfigManager::setOptionsState(const QString &optionName, const QString &st
     _optionsStates.insert(optionName, state);
 }
 
+QString ConfigManager::defaultPlatform() const
+{
+    QString platform_notes;
+    return defaultPlatform(platform_notes);
+}
+
+QString ConfigManager::defaultPlatform(QString &platform_notes) const
+{
+    QString spec;
+
+#if defined (Q_OS_WIN)
+    auto paths = qEnvironmentVariable("PATH").split(":");
+    std::function<bool(const QString&)> isFilePresent = [&paths](const QString &fileName) {
+        foreach (QString p, paths)
+            if (QFile::exists(p + "/" + fileName))
+                return true;
+        return false;
+    };
+
+
+    if (isFilePresent("%icl.exe%"))
+        spec = "win32-icc";
+    else if (isFilePresent("cl.exe"))
+        spec = "win32-msvc";
+    else if (isFilePresent("clang-cl.exe"))
+        spec = "win32-clang-msvc";
+    else if (isFilePresent("clang.exe"))
+        spec = "win32-clang-g++";
+    else if (isFilePresent("g++.exe"))
+        spec = "win32-g++";
+
+#elif defined (Q_OS_Darwin)
+    spec = "macx-clang";
+#elif defined (Q_OS_AIX)
+    platform_notes="AIX: aix-g++ aix-g++-64"
+    spec = "aix-g++";
+#elif defined (Q_OS_GNU)
+    spec = "hurd-g++";
+#elif defined (Q_OS_FREEBSD)
+    auto versionParts = QSysInfo::productVersion().split(".");
+    if (!versionParts.length())
+        spec = QString();
+
+    if (versionParts.at(0).toInt() >= 10) {
+        platform_notes = "freebsd-g++";
+        spec = "freebsd-clang";
+    } else {
+        platform_notes = "freebsd-clang";
+        spec = "freebsd-g++";
+    }
+#elif defined (Q_OS_OPENBSD)
+    spec = "openbsd-g++";
+#elif defined (Q_OS_NETBSD)
+    spec = "netbsd-g++";
+#elif defined (Q_OS_HPUS)
+    if (QSysInfo::currentCpuArchitecture().contains(QLatin1String("64")))
+        spec = "hpuxi-g++-64";
+#elif defined (Q_OS_LINUX)
+    platform_notes = "linux-clang linux-icc";
+    spec = "linux-g++";
+#elif defined (Q_OS_SOLARIS)
+    platform_notes = "solaris-g++-64 solaris-cc-64";
+    spec = "solaris-cc";
+#elif defined (Q_OS_CYGWIN)
+    spec = "cygwin-g++";
+#elif defined (Q_OS_LYNX)
+    spec = "lynxos-g++";
+#elif defined (Q_OS_QNX)
+    spec = "unsupported/qnx-g++";
+#endif
+    return spec;
+}
+
 bool ConfigManager::confirmLicense() const
 {
     return m_confirmLicense;
@@ -179,6 +253,13 @@ QProcess *ConfigManager::createProcess() const
 void ConfigManager::clearFeatureStates()
 {
     _featuresStates.clear();
+}
+
+Qt::CheckState ConfigManager::featureState(const QString &featureName) const
+{
+    if (_featuresStates.contains(featureName))
+        return _featuresStates.value(featureName);
+    return Qt::PartiallyChecked;
 }
 
 QStringList ConfigManager::nomake() const
@@ -266,7 +347,7 @@ void ConfigManager::importSettings()
 
             QString val;
             Option *o = optionByOpt(ba, val);
-            if (!o->name.isEmpty()){
+            if (o){
                 if (o->type == Option::AddString) {
                     qDebug() << o->name << "need next line";
                     opts.takeFirst();

@@ -1,6 +1,7 @@
 #include "featurefilterproxy.h"
 #include "pagefeatures.h"
 #include "global.h"
+#include "condition.h"
 
 #include <QKeyEvent>
 #include <QStandardItemModel>
@@ -190,10 +191,13 @@ void PageFeatures::on_treeView_activated(const QModelIndex &index)
     QVariant v = featuresFilter->mapToSource(index).data(DataRole);
     if (v.isValid()) {
         Feature *ft = v.value<Feature*>();
+        auto condition = ft->condition.join(" && ");
+        Condition cond(condition, _config);
+        cond.check();
         labelLabel->setText(ft->label);
         labelSection->setText(ft->section);
         labelPurpose->setText(ft->purpose);
-        labelCondition->setText(ft->condition.join(" & "));
+        labelCondition->setText(condition);
     } else {
         qDebug() << v;
     }

@@ -59,10 +59,13 @@ public:
     void setSelectedModules(const QStringList &selectedModules);
 
     void clearFeatureStates();
+    Qt::CheckState featureState(const QString &featureName) const;
     void setFeatureState(const QString &featureName, const Qt::CheckState &state);
 
     void clearOptionsStates();
     void setOptionsState(const QString &optionName, const QString &state);
+    QString defaultPlatform() const;
+    QString defaultPlatform(QString &platform_notes) const;
 
     void importSettings();
     void deleteSettings();

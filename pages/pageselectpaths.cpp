@@ -9,7 +9,7 @@ PageSelectPaths::PageSelectPaths(ConfigManager *config, QWidget *parent)
     : WizardPageBase(config, parent)
 {
     setupUi(this);
-
+    labelDefaultMkspec->setText(_config->defaultPlatform());
 }
 
 bool PageSelectPaths::validatePage()

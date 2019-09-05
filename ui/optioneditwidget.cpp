@@ -1,4 +1,5 @@
 #include <QDebug>
+#include <QFileDialog>
 #include <QListWidget>
 #include <QPainter>
 #include <QPlainTextEdit>
@@ -12,6 +13,12 @@ OptionEditWidget::OptionEditWidget(QWidget *parent) :
     checkableListWidget = new QListWidget(this);
     comboBoxCheckable->setModel(checkableListWidget->model());
     comboBoxCheckable->setView(checkableListWidget);
+
+    toolButtonBrowse->hide();
+
+#define x(name) _index##name = stackedWidget->indexOf(page##name);
+    FOREACH_PAGE(x)
+#undef x
 }
 
 QVariant OptionEditWidget::value() const
@@ -35,8 +42,18 @@ QVariant OptionEditWidget::value() const
     case Option::OptionalString:
         return _lineEdit->text();
 
-    case Option::AddString:
-        return plainEditComboStrings->value();
+    case Option::AddString: {
+        if (stackedWidget->currentWidget() == pageStringsSelection) {
+            QVariantList ret;
+            for (int i = 0; i < comboBoxCheckable->count(); ++i) {
+                if (comboBoxCheckable->itemData(i, Qt::CheckStateRole) == Qt::Checked)
+                    ret.append(comboBoxCheckable->itemText(i));
+            }
+            return ret;
+        } else {
+            return plainEditComboStrings->value();
+        }
+    }
 
     case Option::Enum:
         return _comboBox->currentText();
@@ -148,24 +165,24 @@ void OptionEditWidget::valueSet()
 
 void OptionEditWidget::on_toolButtonReset_clicked()
 {
-//    reseted = true;
-//    switch (_type) {
-//    case Option::Bool:
-//        checkBox->setCheckState(Qt::PartiallyChecked);
-//        break;
+    reseted = true;
+    switch (_type) {
+    case Option::Bool:
+        checkBox->setCheckState(Qt::PartiallyChecked);
+        break;
 
-//    case Option::String:
-//    case Option::OptionalString:
-//        _lineEdit->clear();
-//        break;
+    case Option::String:
+    case Option::OptionalString:
+        _lineEdit->clear();
+        break;
 
-//    case Option::Enum:
-//        _comboBox->setCurrentIndex(-1);
-//        break;
+    case Option::Enum:
+        _comboBox->setCurrentIndex(-1);
+        break;
 
-//    default:
-//        break;
-//    }
+    default:
+        break;
+    }
 }
 
 void OptionEditWidget::on_checkBox_stateChanged(int n)
@@ -185,6 +202,9 @@ void OptionEditWidget::on_checkBox_stateChanged(int n)
     }
 }
 
-
-
-
+void OptionEditWidget::on_toolButtonBrowse_clicked()
+{
+    QString path = QFileDialog::getExistingDirectory(this, QString(), _lineEdit->text());
+    if (path != QString())
+        _lineEdit->setText(path);
+}

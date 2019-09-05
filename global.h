@@ -45,25 +45,6 @@ struct Option {
         this->typeString = typeString;
     }
 
-//    QVariant::Type variantType() const {
-//        if (type == "boolean")
-//            return QVariant::Bool;
-
-//        if (type == "enum")
-//            return QVariant::List;
-
-//        if (type == "optionalString" || type == "string")
-//            return QVariant::String;
-
-//        if (type == "addString")
-//            return QVariant::StringList;
-
-
-//        if (type == "void")
-//            return QVariant::Invalid;
-
-//        return QVariant::String;
-//    }
     QVariant createValues() {
         if (type == Enum || type == AddString) {
             QVariantList list;

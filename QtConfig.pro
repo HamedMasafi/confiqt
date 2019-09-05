@@ -27,6 +27,7 @@ CONFIG += c++11
 INCLUDEPATH += config models ui pages
 
 SOURCES += \
+        config/condition.cpp \
         config/configmanager.cpp \
         models/featurefilterproxy.cpp \
         global.cpp \
@@ -52,6 +53,7 @@ SOURCES += \
         pages/wizardpagebase.cpp
 
 HEADERS += \
+        config/condition.h \
         config/configmanager.h \
         models/featurefilterproxy.h \
         global.h \
