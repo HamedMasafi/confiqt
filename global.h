@@ -61,6 +61,45 @@ struct Option {
 
         return QVariant();
     }
+    QStringList applyValue(const QVariant &val) {
+        switch (type) {
+        case Unknown:
+            return QStringList();
+
+        case Bool:
+            if (val.type() == QVariant::Bool) {
+                if (val.toBool())
+                    return QStringList() << "-" + name;
+                else
+                    return QStringList() << "-no-" + name;
+            }
+            break;
+
+        case Enum:
+        case String:
+        case OptionalString:
+            if (val.type() == QVariant::String)
+                return QStringList() << "-" + name << val.toString();
+            break;
+
+        case AddString: {
+            QStringList ret;
+            if (val.type() == QVariant::List) {
+                auto list = val.toList();
+                foreach (QVariant v, list)
+                    ret << "-" + name << v.toString();
+                return ret;
+            }
+            break;
+        }
+        case Void:
+            if (val.type() == QVariant::Bool && val.toBool())
+                return QStringList() << "-" + name;
+            break;
+        }
+
+        return QStringList();
+    }
 };
 
 struct Feature {

@@ -4,6 +4,7 @@
 #include "condition.h"
 
 #include <QKeyEvent>
+#include <QMessageBox>
 #include <QStandardItemModel>
 
 PageFeatures::PageFeatures(ConfigManager *config, QWidget *parent)
@@ -192,12 +193,17 @@ void PageFeatures::on_treeView_activated(const QModelIndex &index)
     if (v.isValid()) {
         Feature *ft = v.value<Feature*>();
         auto condition = ft->condition.join(" && ");
-        Condition cond(condition, _config);
-        cond.check();
+        cond = Condition(condition, _config);
         labelLabel->setText(ft->label);
         labelSection->setText(ft->section);
         labelPurpose->setText(ft->purpose);
         labelCondition->setText(condition);
+//        if (condition.isEmpty())
+//            labelCondition->clear();
+//        else {
+//            bool cc = cond.check();
+//            labelCondition->setText(QString(cc ? "True" : "False") + " (<a href=#>Explain</a>)");
+//        }
     } else {
         qDebug() << v;
     }
@@ -211,4 +217,12 @@ void PageFeatures::on_lineEditFilterFeature_textChanged(const QString &s)
 void PageFeatures::on_comboBoxModules_currentTextChanged(const QString &s)
 {
     featuresFilter->setModuleName(s);
+}
+
+void PageFeatures::on_labelCondition_linkActivated(const QString &link)
+{
+    Q_UNUSED(link);
+    QMessageBox::information(this, "Condition result",
+                             cond.cond() + "\n" +
+                             cond.toString());
 }

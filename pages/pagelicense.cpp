@@ -22,7 +22,9 @@ bool PageLicense::validatePage()
         return false;
     }
     _config->setConfirmLicense(checkBoxConfirmLicense->isChecked());
-    _config->setUseCommercial(comboBoxLicenseType->currentIndex() == 1);
+    _config->setLicenseType(comboBoxLicenseType->currentIndex() == 1
+                            ? ConfigManager::LicenceType::Commercial
+                            : ConfigManager::LicenceType::OpenSource);
 
     return true;
 }

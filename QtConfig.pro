@@ -28,6 +28,7 @@ INCLUDEPATH += config models ui pages
 
 SOURCES += \
         config/condition.cpp \
+        config/conditiondata.cpp \
         config/configmanager.cpp \
         models/featurefilterproxy.cpp \
         global.cpp \
@@ -54,6 +55,7 @@ SOURCES += \
 
 HEADERS += \
         config/condition.h \
+        config/conditiondata.h \
         config/configmanager.h \
         models/featurefilterproxy.h \
         global.h \

@@ -67,13 +67,14 @@ QStringList ConfigManager::createLibs() const
     QStringList args;
     auto itOptions = _optionsStates.begin();
     while (itOptions != _optionsStates.end()) {
-        if (itOptions.value() != QString()) {
-            if (itOptions.value() == "true")
-                args << "-" + itOptions.key();
-            else if (itOptions.value() == "false")
-                args << "-no-" + itOptions.key();
-            else
-                args << "-" + itOptions.value() + "-" + itOptions.key();
+        if (itOptions.value() != QVariant()) {
+            auto opt = option(itOptions.key());
+
+            if (opt) {
+                auto tmp = opt->applyValue(itOptions.value());
+                if (tmp != QStringList())
+                    args << tmp;
+            }
         }
         ++itOptions;
     }
@@ -83,16 +84,14 @@ QStringList ConfigManager::createLibs() const
 QStringList ConfigManager::createCommons() const
 {
     QStringList args;
-    args << "-prefix "
-         << m_installPath;
 
-    if (m_useCommercial)
-        args << "-commercial";
-    else
-        args << "-opensource";
+//    if (m_useCommercial)
+//        args << "-commercial";
+//    else
+//        args << "-opensource";
 
-    if (m_confirmLicense)
-        args << "-confirm-license";
+//    if (m_confirmLicense)
+//        args << "-confirm-license";
 
     auto modules = _submodules;
     foreach (QString selectedModule, _selectedModules)
@@ -127,12 +126,17 @@ void ConfigManager::setFeatureState(const QString &featureName, const Qt::CheckS
     _featuresStates.insert(featureName, state);
 }
 
+QVariant ConfigManager::optionState(const QString &name) const
+{
+    return _optionsStates.value(name);
+}
+
 void ConfigManager::clearOptionsStates()
 {
     _optionsStates.clear();
 }
 
-void ConfigManager::setOptionsState(const QString &optionName, const QString &state)
+void ConfigManager::setOptionsState(const QString &optionName, const QVariant &state)
 {
     _optionsStates.insert(optionName, state);
 }
@@ -210,15 +214,47 @@ QString ConfigManager::defaultPlatform(QString &platform_notes) const
     return spec;
 }
 
-bool ConfigManager::confirmLicense() const
+void ConfigManager::qmakeConfFile(const QString &path)
 {
-    return m_confirmLicense;
+    QFile file(path);
+    if (!file.open(QIODevice::Text | QIODevice::ReadOnly)) {
+        qDebug() << "Unable to open file:"<<file.fileName();
+        return;
+    }
+
+    auto lines = file.readAll().split('\n');
+    QRegularExpression rInclude("include\\((\\S+)\\)");
+    QRegularExpression rVariable("QMAKE(\\S+)\\s*\\=\\s*(\\S+)");
+    foreach (auto line, lines) {
+        auto m = rInclude.match(line);
+        if (m.hasMatch()) {
+            qmakeConfFile(QFileInfo(file).absolutePath() + "/" + m.captured(1));
+            continue;
+        }
+        m = rVariable.match(line);
+        if (m.hasMatch()) {
+            _configs.insert(m.captured(1));
+        }
+    }
 }
 
-bool ConfigManager::useCommercial() const
+void ConfigManager::readConfig()
 {
-    return m_useCommercial;
+    _configs.clear();
+    auto platform = defaultPlatform();
+    qmakeConfFile(m_sourcePath + "qtbase/mkspecs/" + platform + "/qmake.conf");
 }
+
+bool ConfigManager::confirmLicense() const
+{
+    return optionState("confirm-license").toBool();
+//    return m_confirmLicense;
+}
+
+//bool ConfigManager::useCommercial() const
+//{
+//    return m_useCommercial;
+//}
 
 bool ConfigManager::isSaveNeeded() const
 {
@@ -231,6 +267,11 @@ bool ConfigManager::isSaveNeeded() const
     return false;
 }
 
+bool ConfigManager::hasConfig(const QString &name) const
+{
+    return _configs.contains(name);
+}
+
 QString ConfigManager::buildPath() const
 {
     return m_buildPath;
@@ -238,7 +279,7 @@ QString ConfigManager::buildPath() const
 
 QString ConfigManager::installPath() const
 {
-    return m_installPath;
+    return optionState("prefix").toString();
 }
 
 QProcess *ConfigManager::createProcess() const
@@ -313,7 +354,11 @@ void ConfigManager::importSettings()
 
         _selectedModules = _submodules;
         setConfirmLicense(opts.contains("-confirm-license"));
-        setUseCommercial(!opts.contains("-opensource"));
+        if (opts.contains("-opensource"))
+            setLicenseType(LicenceType::OpenSource);
+        else if (opts.contains("-commercial"))
+            setLicenseType(LicenceType::Commercial);
+
         while (opts.count()) {
             auto ba = opts.takeFirst();
 
@@ -339,11 +384,11 @@ void ConfigManager::importSettings()
                 _selectedModules.removeOne(ba);
                 continue;
             }
-//            if (ba == "-nomake") {
-//                ba = opts.takeFirst();
-//                _nomake.append(ba);
-//                continue;
-//            }
+            //            if (ba == "-nomake") {
+            //                ba = opts.takeFirst();
+            //                _nomake.append(ba);
+            //                continue;
+            //            }
 
             QString val;
             Option *o = optionByOpt(ba, val);
@@ -375,7 +420,7 @@ void ConfigManager::deleteSettings()
     }
 }
 
-Option *ConfigManager::option(const QString &name)
+Option *ConfigManager::option(const QString &name) const
 {
     foreach(Option *o, _options)
         if (o->name == name)
@@ -509,6 +554,8 @@ void ConfigManager::setSourcePath(QString sourcePath)
         _licenses.append(l.replace("LICENSE.", ""));
     emit licensesUpdated();
 
+    readConfig();
+
     emit sourcePathChanged(m_sourcePath);
 }
 
@@ -527,32 +574,49 @@ void ConfigManager::setBuildPath(QString buildPath)
 
 void ConfigManager::setInstallPath(QString installPath)
 {
-    if (!installPath.endsWith("/"))
-        installPath.append("/");
+    setOptionsState("prefix", installPath);
+//    if (!installPath.endsWith("/"))
+//        installPath.append("/");
 
-    if (m_installPath == installPath)
-        return;
+//    if (m_installPath == installPath)
+//        return;
 
-    m_installPath = installPath;
-    emit installPathChanged(m_installPath);
+//    m_installPath = installPath;
+//    emit installPathChanged(m_installPath);
 }
 
 void ConfigManager::setConfirmLicense(bool confirmLicense)
 {
-    if (m_confirmLicense == confirmLicense)
-        return;
+    setOptionsState("confirm-license", confirmLicense);
+//    if (m_confirmLicense == confirmLicense)
+//        return;
 
-    m_confirmLicense = confirmLicense;
-    emit confirmLicenseChanged(m_confirmLicense);
+//    m_confirmLicense = confirmLicense;
+//    emit confirmLicenseChanged(m_confirmLicense);
 }
 
-void ConfigManager::setUseCommercial(bool useCommercial)
-{
-    if (m_useCommercial == useCommercial)
-        return;
+//void ConfigManager::setUseCommercial(bool useCommercial)
+//{
+//    if (m_useCommercial == useCommercial)
+//        return;
 
-    m_useCommercial = useCommercial;
-    emit useCommercialChanged(m_useCommercial);
+//    m_useCommercial = useCommercial;
+//    emit useCommercialChanged(m_useCommercial);
+//}
+
+ConfigManager::LicenceType ConfigManager::licenseType() const
+{
+    if (optionState("opensource").toBool())
+        return ConfigManager::LicenceType::OpenSource;
+    if (optionState("commercial").toBool())
+        return ConfigManager::LicenceType::Commercial;
+    return ConfigManager::LicenceType::Unset;
+}
+
+void ConfigManager::setLicenseType(const LicenceType &licenseType)
+{
+    setOptionsState("opensource", licenseType == LicenceType::OpenSource);
+    setOptionsState("commercial", licenseType == LicenceType::Commercial);
 }
 
 void ConfigManager::clear()

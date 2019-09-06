@@ -4,6 +4,8 @@
 #include "ui_pagefeatures.h"
 #include "wizardpagebase.h"
 
+#include <condition.h>
+
 class FeatureFilterProxy;
 class QStandardItemModel;
 class QStandardItem;
@@ -15,6 +17,7 @@ class PageFeatures : public WizardPageBase, private Ui::PageFeatures
     QStandardItemModel *featuresModel;
 
     void checkItem(QStandardItem *item);
+    Condition cond;
 public:
     explicit PageFeatures(ConfigManager *config, QWidget *parent = nullptr);
 
@@ -31,6 +34,8 @@ private slots:
     void on_lineEditFilterFeature_textChanged(const QString &arg1);
 
     void on_comboBoxModules_currentTextChanged(const QString &arg1);
+
+    void on_labelCondition_linkActivated(const QString &link);
 
 public:
     bool eventFilter(QObject *watched, QEvent *event);
