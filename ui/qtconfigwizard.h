@@ -7,6 +7,7 @@
     x(Welcome) \
     x(SelectPaths) \
     x(License) \
+    x(Common) \
     x(SelectPlatform) \
     x(CrossCompile) \
     x(Modules) \

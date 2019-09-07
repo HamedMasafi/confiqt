@@ -14,9 +14,6 @@ class ConfigManager : public QObject
 
     Q_PROPERTY(QString sourcePath READ sourcePath WRITE setSourcePath NOTIFY sourcePathChanged)
     Q_PROPERTY(QString buildPath READ buildPath WRITE setBuildPath NOTIFY buildPathChanged)
-    Q_PROPERTY(QString installPath READ installPath WRITE setInstallPath NOTIFY installPathChanged)
-//    Q_PROPERTY(bool confirmLicense READ confirmLicense WRITE setConfirmLicense NOTIFY confirmLicenseChanged)
-//    Q_PROPERTY(bool useCommercial READ useCommercial WRITE setUseCommercial NOTIFY useCommercialChanged)
 
 public:
     enum class LicenceType {
@@ -35,57 +32,60 @@ public:
 
     ConfigManager();
 
+    //properties
     QString sourcePath() const;
     QString buildPath() const;
     QString installPath() const;
-    QList<Option *> options() const;
-    QList<Feature *> features() const;
-    QStringList submodules() const;
-    QStringList selectedModules() const;
-    QStringList platforms() const;
 
-    QStringList createFeatures() const;
-    QStringList createLibs() const;
-    QStringList createCommons() const;
-    QStringList createCommand() const;
-    QProcess *createProcess() const;
-
-    void setSelectedModules(const QStringList &selectedModules);
-
-    void clearFeatureStates();
-    Qt::CheckState featureState(const QString &featureName) const;
-    void setFeatureState(const QString &featureName, const Qt::CheckState &state);
-    QVariant optionState(const QString &name) const;
-    void setOptionsState(const QString &optionName, const QVariant &state);
-
-    void clearOptionsStates();
-    QString defaultPlatform() const;
-    QString defaultPlatform(QString &platform_notes) const;
-
-    void readConfig();
-    void importSettings();
-    void deleteSettings();
-    Option *option(const QString &name) const;
-    Option *optionByOpt(const QString &opt, QString &val);
-    Feature *feature(const QString &name);
-
-    void process();
-
-    bool save(const QString &path = QString(), const SaveParametereType &params = All);
-
-    bool confirmLicense() const;
-
-    bool useCommercial() const;
-    bool isSaveNeeded() const;
-    bool hasConfig(const QString &name) const;
-    QStringList licenses() const;
-
-    QStringList nomake() const;
-
-    QStringList devices() const;
 
     LicenceType licenseType() const;
     void setLicenseType(const LicenceType &licenseType);
+
+    QStringList selectedModules() const;
+    void setSelectedModules(const QStringList &selectedModules);
+
+    bool confirmLicense() const;
+    QStringList submodules() const;
+    QStringList platforms() const;
+    QStringList licenses() const;
+
+    QString defaultPlatform() const;
+    QString defaultPlatform(QString &platform_notes) const;
+    QVariantList nomake() const;
+
+    QStringList devices() const;
+
+    // features
+    void clearFeatureStates();
+    Qt::CheckState featureState(const QString &featureName) const;
+    void setFeatureState(const QString &featureName, const Qt::CheckState &state);
+    Feature *feature(const QString &name);
+    QList<Feature *> features() const;
+
+    // options
+    void clearOptionsStates();
+    QVariant optionState(const QString &name) const;
+    void setOptionsState(const QString &optionName, const QVariant &state);
+    Option *option(const QString &name) const;
+    Option *optionByOpt(const QString &opt, QString &val);
+    QList<Option *> options() const;
+
+    // config
+    bool hasConfig(const QString &name) const;
+
+    // save/restore
+    QStringList createFeatures() const;
+    QStringList createOptions() const;
+    QStringList createCommons() const;
+    QStringList createCommand(const SaveParametereType &params = All) const;
+    QProcess *createProcess() const;
+    void readConfig();
+    void importSettings();
+    void deleteSettings();
+    bool save(const QString &path = QString(), const SaveParametereType &params = All);
+    bool isSaveNeeded() const;
+
+    void process();
 
 public slots:
     void setSourcePath(QString sourcePath);
@@ -94,14 +94,9 @@ public slots:
 
     void setConfirmLicense(bool confirmLicense);
 
-//    void setUseCommercial(bool useCommercial);
-
 signals:
     void sourcePathChanged(QString sourcePath);
     void buildPathChanged(QString buildPath);
-    void installPathChanged(QString installPath);
-    void confirmLicenseChanged(bool confirmLicense);
-//    void useCommercialChanged(bool useCommercial);
 
     void readComplate();
     void modulesUpdated();
@@ -120,17 +115,11 @@ private:
     QStringList _licenses;
     QSet<QString> _configs;
 
-    //depreacted
-    QStringList _nomake;
-
     QMap<QString, Qt::CheckState> _featuresStates;
     QMap<QString, QVariant> _optionsStates;
 
     QString m_sourcePath;
     QString m_buildPath;
-//    QString m_installPath;
-//    bool m_confirmLicense;
-//    bool m_useCommercial;
     LicenceType _licenseType;
 
     void clear();

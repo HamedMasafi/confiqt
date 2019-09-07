@@ -62,7 +62,7 @@ QStringList ConfigManager::createFeatures() const
     return args;
 }
 
-QStringList ConfigManager::createLibs() const
+QStringList ConfigManager::createOptions() const
 {
     QStringList args;
     auto itOptions = _optionsStates.begin();
@@ -85,14 +85,6 @@ QStringList ConfigManager::createCommons() const
 {
     QStringList args;
 
-//    if (m_useCommercial)
-//        args << "-commercial";
-//    else
-//        args << "-opensource";
-
-//    if (m_confirmLicense)
-//        args << "-confirm-license";
-
     auto modules = _submodules;
     foreach (QString selectedModule, _selectedModules)
         modules.removeAll(selectedModule);
@@ -104,19 +96,13 @@ QStringList ConfigManager::createCommons() const
     return args;
 }
 
-QStringList ConfigManager::createCommand() const
+QStringList ConfigManager::createCommand(const ConfigManager::SaveParametereType &params) const
 {
     QStringList args;
 
-
-    args.append(createCommons());
-
-    foreach (QString nm, _nomake)
-        args << "-nomake"
-             << nm;
-
-    args.append(createFeatures());
-    args.append(createLibs());
+    if (params & Commons) args.append(createCommons());
+    if (params & Features) args.append(createFeatures());
+    if (params & Options) args.append(createOptions());
 
     return args;
 }
@@ -248,13 +234,7 @@ void ConfigManager::readConfig()
 bool ConfigManager::confirmLicense() const
 {
     return optionState("confirm-license").toBool();
-//    return m_confirmLicense;
 }
-
-//bool ConfigManager::useCommercial() const
-//{
-//    return m_useCommercial;
-//}
 
 bool ConfigManager::isSaveNeeded() const
 {
@@ -303,9 +283,9 @@ Qt::CheckState ConfigManager::featureState(const QString &featureName) const
     return Qt::PartiallyChecked;
 }
 
-QStringList ConfigManager::nomake() const
+QVariantList ConfigManager::nomake() const
 {
-    return _nomake;
+    return optionState("nomake").toList();
 }
 
 QStringList ConfigManager::devices() const
@@ -486,11 +466,7 @@ bool ConfigManager::save(const QString &path, const ConfigManager::SaveParameter
     else
         outPath = path;
 
-    QStringList args;
-
-    if (params & Commons) args.append(createCommons());
-    if (params & Features) args.append(createFeatures());
-    if (params & Options) args.append(createLibs());
+    QStringList args = createCommand(params);
 
     QFile optFile(outPath);
     if (!optFile.open(QIODevice::Text | QIODevice::WriteOnly))
@@ -575,34 +551,12 @@ void ConfigManager::setBuildPath(QString buildPath)
 void ConfigManager::setInstallPath(QString installPath)
 {
     setOptionsState("prefix", installPath);
-//    if (!installPath.endsWith("/"))
-//        installPath.append("/");
-
-//    if (m_installPath == installPath)
-//        return;
-
-//    m_installPath = installPath;
-//    emit installPathChanged(m_installPath);
 }
 
 void ConfigManager::setConfirmLicense(bool confirmLicense)
 {
     setOptionsState("confirm-license", confirmLicense);
-//    if (m_confirmLicense == confirmLicense)
-//        return;
-
-//    m_confirmLicense = confirmLicense;
-//    emit confirmLicenseChanged(m_confirmLicense);
 }
-
-//void ConfigManager::setUseCommercial(bool useCommercial)
-//{
-//    if (m_useCommercial == useCommercial)
-//        return;
-
-//    m_useCommercial = useCommercial;
-//    emit useCommercialChanged(m_useCommercial);
-//}
 
 ConfigManager::LicenceType ConfigManager::licenseType() const
 {

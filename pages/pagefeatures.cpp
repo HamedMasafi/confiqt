@@ -6,6 +6,7 @@
 #include <QKeyEvent>
 #include <QMessageBox>
 #include <QStandardItemModel>
+#include <qtlitedialog.h>
 
 PageFeatures::PageFeatures(ConfigManager *config, QWidget *parent)
     : WizardPageBase(config, parent)
@@ -68,8 +69,26 @@ void PageFeatures::config_configuresUpdated()
         item->setData(static_cast<int>(FeatureTreeNodeType::Feature), TypeRole);
 
         QStandardItem *checkItem = new QStandardItem;
-        checkItem->setData(Qt::PartiallyChecked, CheckStateRole);
-
+        auto checkState = _config->featureState(k->name);
+        QString text;
+        QVariant color;
+        switch (checkState) {
+        case Qt::Checked:
+            text = "Yes";
+            color = QColor(Qt::green);
+            break;
+        case Qt::Unchecked:
+            text = "No";
+            color = QColor(Qt::red);
+            break;
+        case Qt::PartiallyChecked:
+            break;
+        }
+        if (checkState != Qt::PartiallyChecked)
+            qDebug() << k->name << checkState;
+        checkItem->setData(checkState, CheckStateRole);
+        checkItem->setData(text, Qt::DisplayRole);
+        checkItem->setData(color, Qt::DecorationRole);
 
         if (k->section.isEmpty()) {
             moduleItem->appendRow(QList<QStandardItem*>()<< item << checkItem);
@@ -204,6 +223,7 @@ void PageFeatures::on_treeView_activated(const QModelIndex &index)
 //            bool cc = cond.check();
 //            labelCondition->setText(QString(cc ? "True" : "False") + " (<a href=#>Explain</a>)");
 //        }
+        qDebug() << cond.check() << condition;
     } else {
         qDebug() << v;
     }
@@ -225,4 +245,15 @@ void PageFeatures::on_labelCondition_linkActivated(const QString &link)
     QMessageBox::information(this, "Condition result",
                              cond.cond() + "\n" +
                              cond.toString());
+}
+
+void PageFeatures::on_pushButtonQtLite_clicked()
+{
+    QtLiteDialog d(this);
+    if (d.exec() == QDialog::Accepted) {
+        auto fs = d.features();
+        foreach (QString f, fs)
+            _config->setFeatureState(f, Qt::Unchecked);
+        config_configuresUpdated();
+    }
 }

@@ -37,6 +37,8 @@ private slots:
 
     void on_labelCondition_linkActivated(const QString &link);
 
+    void on_pushButtonQtLite_clicked();
+
 public:
     bool eventFilter(QObject *watched, QEvent *event);
 

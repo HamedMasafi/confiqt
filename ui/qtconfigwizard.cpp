@@ -10,6 +10,7 @@
 #include "pages/pageselectpaths.h"
 #include "pages/pageselectplatform.h"
 #include "pages/pagewelcome.h"
+#include "pages/pagecommon.h"
 #include "pages/pagenomake.h"
 #include "pages/pagerun.h"
 #include "pages/pagefinish.h"
@@ -34,6 +35,7 @@ QtConfigWizard::QtConfigWizard(QWidget *parent) :
             _simpleIds << _indexWelcome
                        << _indexSelectPaths
                        << _indexLicense
+                       << _indexCommon
                        << _indexFeatures
                        << _indexSelectBuildMethod
                        << _indexRun

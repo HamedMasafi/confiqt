@@ -34,6 +34,7 @@ SOURCES += \
         global.cpp \
         config/jsonconfig.cpp \
         main.cpp \
+        pages/pagecommon.cpp \
         ui/optioneditwidget.cpp \
         ui/optionsselectdelegate.cpp \
         pages/pagecrosscompile.cpp \
@@ -50,6 +51,7 @@ SOURCES += \
         pages/pagewelcome.cpp \
         ui/plaintextcombobox.cpp \
         ui/qtconfigwizard.cpp \
+        ui/qtlitedialog.cpp \
         ui/saveconfirmdialog.cpp \
         pages/wizardpagebase.cpp
 
@@ -60,6 +62,7 @@ HEADERS += \
         models/featurefilterproxy.h \
         global.h \
         config/jsonconfig.h \
+        pages/pagecommon.h \
         ui/optioneditwidget.h \
         ui/optionsselectdelegate.h \
         pages/pagecrosscompile.h \
@@ -76,10 +79,12 @@ HEADERS += \
         pages/pagewelcome.h \
         ui/plaintextcombobox.h \
         ui/qtconfigwizard.h \
+        ui/qtlitedialog.h \
         ui/saveconfirmdialog.h \
         pages/wizardpagebase.h
 
 FORMS += \
+        pages/pagecommon.ui \
         ui/optioneditwidget.ui \
         pages/pagecrosscompile.ui \
         pages/pagefeatures.ui \
@@ -94,9 +99,12 @@ FORMS += \
         pages/pageselectplatform.ui \
         pages/pagewelcome.ui \
         ui/qtconfigwizard.ui \
+        ui/qtlitedialog.ui \
         ui/saveconfirmdialog.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+include(../WebRequest/WebRequest.pri)

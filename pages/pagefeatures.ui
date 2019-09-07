@@ -93,6 +93,13 @@
          </property>
         </spacer>
        </item>
+       <item>
+        <widget class="QPushButton" name="pushButtonQtLite">
+         <property name="text">
+          <string>QtLite.com</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </item>
     </layout>
