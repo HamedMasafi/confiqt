@@ -84,3 +84,11 @@ void QtConfigWizard::closeEvent(QCloseEvent *event)
             event->ignore();
     }
 }
+
+void QtConfigWizard::on_QtConfigWizard_rejected()
+{
+    if (_config->isSaveNeeded()) {
+        SaveConfirmDialog d(_config, this);
+        d.exec();
+    }
+}

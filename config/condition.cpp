@@ -6,12 +6,22 @@
 
 QString Condition::cond() const
 {
-    return _cond;
+    return d->_cond;
 }
 
 void Condition::setCond(const QString &cond)
 {
-    _cond = cond;
+    d->_cond = cond;
+}
+
+QStringList Condition::requirement() const
+{
+    return d->requirement;
+}
+
+bool Condition::result() const
+{
+    return d->finalResult;
 }
 
 Condition::Condition() : d(new ConditionData)
@@ -24,25 +34,27 @@ Condition::Condition(const Condition &other) : d(other.d)
 }
 
 Condition::Condition(const QString &cond, const ConfigManager *config)
-    : d(new ConditionData), _cond(cond), _config(config)
+    : d(new ConditionData(cond, config))
 {
 }
 
-Condition Condition::operator =(const Condition &other)
+Condition &Condition::operator =(const Condition &other)
 {
-    return Condition(other);
+    d = other.d;
+    return *this;
 }
 
-Condition Condition::operator =(Condition &&other)
+Condition &Condition::operator =(Condition &&other)
 {
-    return Condition(other);
+    d = other.d;
+    return *this;
 }
 
 bool Condition::check()
 {
-    if (_cond.isEmpty())
+    if (d->_cond.isEmpty())
         return true;
-    QString cond(_cond);
+    QString cond = d->_cond;
     QRegularExpression r("\\w+\\.\\w+");
      QRegularExpressionMatchIterator i = r.globalMatch(cond);
      while (i.hasNext()) {
@@ -53,16 +65,17 @@ bool Condition::check()
 
          QString val = "";
          if (parts[0] == "features") {
-             auto state = _config->featureState(parts[1]);
+             auto state = d->_config->featureState(parts[1]);
 
              if (state == Qt::Unchecked)
                  val = "0";
              else
                  val = "1";
              d->results.insert("Feature " + parts[1], val == "1");
+             d->requirement.append(parts[1]);
          }
          if (parts[0] == "config") {
-             val = _config->hasConfig(parts[1]) ? "1" : "0";
+             val = d->_config->hasConfig(parts[1]) ? "1" : "0";
              d->results.insert("Config " + parts[1], val == "1");
          }
          if (parts[0] == "test") {

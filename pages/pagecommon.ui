@@ -18,21 +18,21 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QCheckBox" name="checkBox">
+    <widget class="QCheckBox" name="checkBoxDeveloperBuild">
      <property name="text">
       <string>Developer build</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QCheckBox" name="checkBox_2">
+    <widget class="QCheckBox" name="checkBoxStatic">
      <property name="text">
       <string>Static build</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QCheckBox" name="checkBox_3">
+    <widget class="QCheckBox" name="checkBoxOptimizeForSize">
      <property name="text">
       <string>Optimize for size</string>
      </property>

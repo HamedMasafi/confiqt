@@ -10,6 +10,10 @@ class PageCommon : public WizardPageBase, private Ui::PageCommon
 
 public:
     explicit PageCommon(ConfigManager *config, QWidget *parent = nullptr);
+
+    // QWizardPage interface
+public:
+    bool validatePage();
 };
 
 #endif // PAGECOMMON_H

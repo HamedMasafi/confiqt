@@ -42,6 +42,8 @@ private slots:
     void on_QtConfigWizard_accepted();
 
     // QWizard interface
+    void on_QtConfigWizard_rejected();
+
 public:
     int nextId() const;
 

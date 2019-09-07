@@ -124,6 +124,11 @@ void ConfigManager::clearOptionsStates()
 
 void ConfigManager::setOptionsState(const QString &optionName, const QVariant &state)
 {
+    if (!option(optionName)) {
+        qDebug() << "The option" << optionName << "not found!";
+        return;
+    }
+
     _optionsStates.insert(optionName, state);
 }
 

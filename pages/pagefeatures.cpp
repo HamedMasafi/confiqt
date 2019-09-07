@@ -217,15 +217,21 @@ void PageFeatures::on_treeView_activated(const QModelIndex &index)
         Feature *ft = v.value<Feature*>();
         auto condition = ft->condition.join(" && ");
         cond = Condition(condition, _config);
+        cond.check();
         labelLabel->setText(ft->label);
         labelSection->setText(ft->section);
         labelPurpose->setText(ft->purpose);
         labelCondition->setText(condition);
+        auto requirement = cond.requirement();
+        if (requirement.size())
+            labelRequires->setText(requirement.join(", "));
+        else
+            labelRequires->setText("None");
 //        if (condition.isEmpty())
 //            labelCondition->clear();
 //        else {
-//            bool cc = cond.check();
-//            labelCondition->setText(QString(cc ? "True" : "False") + " (<a href=#>Explain</a>)");
+            bool cc = cond.result();
+            labelCondition->setText(QString(cc ? "True" : "False") + " (<a href=#>Explain</a>)");
 //        }
         qDebug() << cond.check() << condition;
     } else {
