@@ -57,6 +57,13 @@
     </layout>
    </item>
    <item>
+    <widget class="QLabel" name="labelStatus">
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="standardButtons">
       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>

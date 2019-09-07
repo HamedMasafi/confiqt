@@ -20,6 +20,10 @@ PageFeatures::PageFeatures(ConfigManager *config, QWidget *parent)
     treeView->installEventFilter(this);
     connect(_config, &ConfigManager::configuresUpdated,
             this, &PageFeatures::config_configuresUpdated);
+
+#ifndef WEB_REQUEST_LIB
+    pushButtonQtLite->hide();
+#endif
 }
 
 void PageFeatures::config_configuresUpdated()

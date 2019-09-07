@@ -1,36 +1,54 @@
+#ifdef WEB_REQUEST_LIB
+
 #include "qtlitedialog.h"
-#include <jsonrequest.h>
+#include <variantrequest.h>
 #include <QDebug>
 #include <QPushButton>
+#include <webrequestmanager.h>
 
 QStringList QtLiteDialog::features() const
 {
     return _features;
 }
 
+void QtLiteDialog::loadingTextChanged(QStringList loadingTexts)
+{
+    labelStatus->setText(loadingTexts.join(", "));
+}
+
 QtLiteDialog::QtLiteDialog(QWidget *parent) :
     QDialog(parent)
 {
-    JsonRequest *tagsRequest = new JsonRequest(this);
+    VariantRequest *tagsRequest = new VariantRequest(this);
     tagsRequest->setObjectName("tagsRequest");
     tagsRequest->setUrl(QUrl("https://qtlite.com/tags.json"));
-
     tagsRequest->setMethod(WebRequest::Get);
-    tagsRequest->send();
+    tagsRequest->setExpirationSeconds(60 * 60 * 24);
+    tagsRequest->setLoadingText("Getting tags");
+    tagsRequest->setIncludeDataInCacheId(true);
 
-    modulesRequest = new JsonRequest(this);
+    modulesRequest = new VariantRequest(this);
     modulesRequest->setObjectName("modulesRequest");
     modulesRequest->setMethod(WebRequest::Get);
+    modulesRequest->setExpirationSeconds(60 * 60 * 24);
+    modulesRequest->setLoadingText("Getting modules");
+    modulesRequest->setIncludeDataInCacheId(true);
 
-    featuresRequest = new JsonRequest(this);
+    featuresRequest = new VariantRequest(this);
     featuresRequest->setObjectName("featuresRequest");
     featuresRequest->setMethod(WebRequest::Get);
+    featuresRequest->setExpirationSeconds(60 * 60 * 24);
+    featuresRequest->setLoadingText("Getting features");
+    featuresRequest->setIncludeDataInCacheId(true);
 
     setupUi(this);
+    connect(WebRequestManager::instance(), &WebRequestManager::loadingTextsChanged,
+            this, &QtLiteDialog::loadingTextChanged);
     buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
     refreashFeaturesButton = new QPushButton(this);
     refreashFeaturesButton->setText("Refresh features");
     buttonBox->addButton(refreashFeaturesButton, QDialogButtonBox::HelpRole);
+    tagsRequest->send();
 }
 
 void QtLiteDialog::on_tagsRequest_finished(QVariant data)
@@ -94,3 +112,5 @@ void QtLiteDialog::on_buttonBox_clicked(QAbstractButton *button)
         featuresRequest->send();
     }
 }
+
+#endif
