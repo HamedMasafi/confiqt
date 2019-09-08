@@ -140,9 +140,9 @@
             </widget>
            </item>
            <item>
-            <widget class="QCheckBox" name="checkBoxLibs">
+            <widget class="QCheckBox" name="checkBoxOptions">
              <property name="text">
-              <string>Libraries</string>
+              <string>Options</string>
              </property>
              <property name="checked">
               <bool>true</bool>

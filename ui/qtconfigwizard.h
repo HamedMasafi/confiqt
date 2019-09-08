@@ -13,7 +13,7 @@
     x(Modules) \
     x(NoMake) \
     x(Features) \
-    x(Libs) \
+    x(Options) \
     x(SelectBuildMethod) \
     x(Run) \
     x(Finish)

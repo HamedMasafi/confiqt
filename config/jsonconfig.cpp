@@ -64,6 +64,8 @@ QList<Option*> JsonConfig::options() const
         Option *o = new Option;
         o->name = key;
         o->moduleName = _moduleName;
+        o->filePath = _filePath;
+
         if (v.isString())
             o->setType(v.toString());
         else if (v.isObject()) {
@@ -97,6 +99,7 @@ QList<Feature*> JsonConfig::features() const
         ft->purpose = obj.value("purpose").toString();
         ft->section = obj.value("section").toString();
         ft->moduleName = _moduleName;
+        ft->filePath = _filePath;
 
         auto condition = obj.value("condition");
         if (condition.isString())

@@ -20,7 +20,7 @@ struct Option {
     QString typeString;
     QVariant values;
     QString moduleName;
-
+    QString filePath;
 
     void setType(const QString &typeString) {
         type = Unknown;
@@ -101,6 +101,7 @@ struct Option {
         return QStringList();
     }
 };
+Q_DECLARE_METATYPE(Option*);
 
 struct Feature {
     QString name;
@@ -108,6 +109,7 @@ struct Feature {
     QString purpose;
     QString section;
     QString moduleName;
+    QString filePath;
     QStringList condition;
 };
 Q_DECLARE_METATYPE(Feature*);

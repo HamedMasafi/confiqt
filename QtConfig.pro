@@ -35,12 +35,12 @@ SOURCES += \
         config/jsonconfig.cpp \
         main.cpp \
         pages/pagecommon.cpp \
+        pages/pageoptions.cpp \
         ui/optioneditwidget.cpp \
         ui/optionsselectdelegate.cpp \
         pages/pagecrosscompile.cpp \
         pages/pagefeatures.cpp \
         pages/pagefinish.cpp \
-        pages/pagelibs.cpp \
         pages/pagelicense.cpp \
         pages/pagemodules.cpp \
         pages/pagenomake.cpp \
@@ -63,12 +63,12 @@ HEADERS += \
         global.h \
         config/jsonconfig.h \
         pages/pagecommon.h \
+        pages/pageoptions.h \
         ui/optioneditwidget.h \
         ui/optionsselectdelegate.h \
         pages/pagecrosscompile.h \
         pages/pagefeatures.h \
         pages/pagefinish.h \
-        pages/pagelibs.h \
         pages/pagelicense.h \
         pages/pagemodules.h \
         pages/pagenomake.h \
@@ -85,11 +85,11 @@ HEADERS += \
 
 FORMS += \
         pages/pagecommon.ui \
+        pages/pageoptions.ui \
         ui/optioneditwidget.ui \
         pages/pagecrosscompile.ui \
         pages/pagefeatures.ui \
         pages/pagefinish.ui \
-        pages/pagelibs.ui \
         pages/pagelicense.ui \
         pages/pagemodules.ui \
         pages/pagenomake.ui \

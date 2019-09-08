@@ -3,7 +3,7 @@
 
 #include "pages/pagecrosscompile.h"
 #include "pages/pagefeatures.h"
-#include "pages/pagelibs.h"
+#include "pages/pageoptions.h"
 #include "pages/pagelicense.h"
 #include "pages/pagemodules.h"
 #include "pages/pageselectbuildmethod.h"

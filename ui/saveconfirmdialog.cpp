@@ -24,7 +24,7 @@ void SaveConfirmDialog::on_buttonBox_accepted()
     if (radioButtonSaveCustomLocation->isChecked())
         path = lineEditPath->text();
 
-    if (checkBoxLibs->isChecked()) params |= ConfigManager::Options;
+    if (checkBoxOptions->isChecked()) params |= ConfigManager::Options;
     if (checkBoxFeatures->isChecked()) params |= ConfigManager::Features;
     if (checkBoxCommon->isChecked()) params |= ConfigManager::Commons;
 

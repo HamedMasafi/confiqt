@@ -1,10 +1,10 @@
 #include "optionsselectdelegate.h"
-#include "pagelibs.h"
+#include "pageoptions.h"
 
 #include <QSortFilterProxyModel>
 #include <QStandardItemModel>
 
-PageLibs::PageLibs(ConfigManager *config, QWidget *parent)
+PageOptions::PageOptions(ConfigManager *config, QWidget *parent)
     : WizardPageBase(config, parent)
 {
     setupUi(this);
@@ -16,10 +16,10 @@ PageLibs::PageLibs(ConfigManager *config, QWidget *parent)
     tableViewOptions->setItemDelegateForColumn(2, new OptionsSelectDelegate(this));
 
     connect(_config, &ConfigManager::configuresUpdated,
-            this, &PageLibs::config_configuresUpdated);
+            this, &PageOptions::config_configuresUpdated);
 }
 
-void PageLibs::config_configuresUpdated()
+void PageOptions::config_configuresUpdated()
 {
     QList<Option*> opts = _config->options();
     optionsModel->clear();
@@ -35,6 +35,7 @@ void PageLibs::config_configuresUpdated()
         item = optionsModel->item(i, 1);
         item->setFlags(item->flags() & ~Qt::ItemIsEditable);
 
+        optionsModel->setData(optionsModel->index(i, 0), QVariant::fromValue(k), DataRole);
         optionsModel->setData(optionsModel->index(i, 2), k->createValues(), DropDownRole);
         optionsModel->setData(optionsModel->index(i, 2), static_cast<int>(k->type), TypeRole);
         optionsModel->setData(optionsModel->index(i, 2), QVariant(), Qt::DisplayRole);
@@ -42,7 +43,7 @@ void PageLibs::config_configuresUpdated()
     optionsFilter->setSourceModel(optionsModel);
 }
 
-bool PageLibs::validatePage()
+bool PageOptions::validatePage()
 {
     _config->clearOptionsStates();
     for (int i = 0; i < optionsModel->rowCount(); ++i) {
@@ -55,7 +56,21 @@ bool PageLibs::validatePage()
     return true;
 }
 
-void PageLibs::on_lineEditFilterOption_textChanged(const QString &s)
+void PageOptions::on_lineEditFilterOption_textChanged(const QString &s)
 {
     optionsFilter->setFilterFixedString(s);
+}
+
+void PageOptions::on_tableViewOptions_activated(const QModelIndex &index)
+{
+    auto idx = optionsFilter->index(index.row(), 0, index.parent());
+
+    auto option = optionsModel->data(optionsFilter->mapToSource(idx), DataRole).value<Option*>();
+
+    if (option) {
+        labelName->setText(option->name);
+        labelModule->setText(option->moduleName);
+        labelType->setText(option->typeString);
+        labelPath->setText(option->filePath);
+    }
 }

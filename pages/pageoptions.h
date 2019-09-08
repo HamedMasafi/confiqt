@@ -1,12 +1,12 @@
-#ifndef PAGELIBS_H
-#define PAGELIBS_H
+#ifndef PAGEOPTIONS_H
+#define PAGEOPTIONS_H
 
-#include "ui_pagelibs.h"
+#include "ui_pageoptions.h"
 #include "wizardpagebase.h"
 
 class QSortFilterProxyModel;
 class QStandardItemModel;
-class PageLibs : public WizardPageBase, private Ui::PageLibs
+class PageOptions : public WizardPageBase, private Ui::PageOptions
 {
     Q_OBJECT
 
@@ -14,14 +14,16 @@ class PageLibs : public WizardPageBase, private Ui::PageLibs
     QStandardItemModel *optionsModel;
 
 public:
-    explicit PageLibs(ConfigManager *config, QWidget *parent = nullptr);
+    explicit PageOptions(ConfigManager *config, QWidget *parent = nullptr);
 private slots:
     void config_configuresUpdated();
 
     void on_lineEditFilterOption_textChanged(const QString &arg1);
 
+    void on_tableViewOptions_activated(const QModelIndex &index);
+
 public:
     bool validatePage();
 };
 
-#endif // PAGELIBS_H
+#endif // PAGEOPTIONS_H
