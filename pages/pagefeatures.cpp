@@ -233,7 +233,7 @@ void PageFeatures::on_treeView_activated(const QModelIndex &index)
             bool cc = cond.result();
             labelCondition->setText(QString(cc ? "True" : "False") + " (<a href=#>Explain</a>)");
 //        }
-        qDebug() << cond.check() << condition;
+//        qDebug() << cond.check() << condition;
     } else {
         qDebug() << v;
     }

@@ -54,43 +54,65 @@ bool Condition::check()
 {
     if (d->_cond.isEmpty())
         return true;
-    QString cond = d->_cond;
-    QRegularExpression r("\\w+\\.\\w+");
-     QRegularExpressionMatchIterator i = r.globalMatch(cond);
-     while (i.hasNext()) {
-         QRegularExpressionMatch m = i.next();
-         auto parts = m.captured(0).split(".");
-         if (parts.length() != 2)
+    QString cond;
+
+    std::function<QString(QString, QString)> checkRule = [this](QString name, QString value) -> QString {
+        QString val = "";
+        if (name.isEmpty() || value.isEmpty())
+            return QString();
+
+        if (name == "features") {
+            auto state = d->_config->featureState(value);
+
+            if (state == Qt::Unchecked)
+                val = "0";
+            else
+                val = "1";
+            d->results.insert("Feature " + value, val == "1");
+            d->requirement.append(value);
+        }
+        if (name == "config") {
+            val = d->_config->hasConfig(value) ? "1" : "0";
+            d->results.insert("Config " + value, val == "1");
+        }
+        if (name == "test") {
+            val = "1";
+        }
+        return val;
+    };
+
+     QString name, value;
+     bool lastIsLetter = false;
+     int step = 0; // none, name, value, etc
+
+     for (int i = 0; i < d->_cond.length(); ++i) {
+         auto ch = d->_cond.at(i);
+         if (ch.isSpace())
              continue;
 
-         QString val = "";
-         if (parts[0] == "features") {
-             auto state = d->_config->featureState(parts[1]);
-
-             if (state == Qt::Unchecked)
-                 val = "0";
-             else
-                 val = "1";
-             d->results.insert("Feature " + parts[1], val == "1");
-             d->requirement.append(parts[1]);
+         if (ch == ".") {
+             step++;
+             continue;
          }
-         if (parts[0] == "config") {
-             val = d->_config->hasConfig(parts[1]) ? "1" : "0";
-             d->results.insert("Config " + parts[1], val == "1");
+         if (ch.isLetter() || ch.isDigit() || ch == '_') {
+             if (!lastIsLetter)
+                 step++;
+             if (step == 1)
+                 name.append(ch);
+             else if (step == 2)
+                 value.append(ch);
+             lastIsLetter = true;
+         } else {
+             cond.append(checkRule(name, value));
+             cond.append(ch);
+             step = 0;
+             name = value = "";
+             lastIsLetter = false;
          }
-         if (parts[0] == "test") {
-             val = "1";
-         }
-         cond  = cond.replace(m.captured(0), val);
-
      }
+     cond.append(checkRule(name, value));
 
-//     cond.clear();
-//     for (int i = 0; i < _cond.length(); ++i) {
-//         auto ch = _cond.at(i);
-////         if (ch.isLetter() || ch == ".")
-//     }
-     QString cond2 = cond.replace(" ", "");
+     QString cond2 = cond;
      forever{
         cond = cond
                 .replace("1&&1", "1")
@@ -112,7 +134,7 @@ bool Condition::check()
              break;
          cond2 = cond;
      }
-     qDebug() << cond;
+
      d->finalResult = cond == "1";
      return d->finalResult;
 }
