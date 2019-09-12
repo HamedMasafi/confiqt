@@ -6,6 +6,8 @@
 #include <QJsonObject>
 #include <QObject>
 
+class Option;
+struct Feature;
 class JsonConfig : public QObject
 {
     Q_OBJECT

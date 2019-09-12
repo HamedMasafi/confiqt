@@ -14,6 +14,8 @@ public:
     // QWizardPage interface
 public:
     bool validatePage();
+private slots:
+    void config_configuresUpdated();
 };
 
 #endif // PAGECOMMON_H

@@ -7,14 +7,14 @@
 #include <condition.h>
 
 class FeatureFilterProxy;
-class QStandardItemModel;
+class FeaturesModel;
 class QStandardItem;
 class PageFeatures : public WizardPageBase, private Ui::PageFeatures
 {
     Q_OBJECT
 
     FeatureFilterProxy *featuresFilter;
-    QStandardItemModel *featuresModel;
+    FeaturesModel *featuresModel;
 
     void checkItem(QStandardItem *item);
     Condition cond;

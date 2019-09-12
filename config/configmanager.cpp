@@ -1,5 +1,8 @@
 #include "configmanager.h"
 #include "jsonconfig.h"
+#include "option.h"
+#include <optionsmodel.h>
+#include "featuresmodel.h"
 
 #include <QDebug>
 #include <QDir>
@@ -11,40 +14,40 @@
 
 QList<Option*> ConfigManager::options() const
 {
-    return _options;
+    return d->options;
 }
 
 QList<Feature*> ConfigManager::features() const
 {
-    return _features;
+    return d->features;
 }
 
 QStringList ConfigManager::submodules() const
 {
-    return _submodules;
+    return d->submodules;
 }
 
 QStringList ConfigManager::selectedModules() const
 {
-    return _selectedModules;
+    return d->selectedModules;
 }
 
 void ConfigManager::setSelectedModules(const QStringList &selectedModules)
 {
-    _selectedModules = selectedModules;
+    d->selectedModules = selectedModules;
     process();
 }
 
 QStringList ConfigManager::platforms() const
 {
-    return _platforms;
+    return d->platforms;
 }
 
 QStringList ConfigManager::createFeatures() const
 {
     QStringList args;
-    auto itFeatures = _featuresStates.begin();
-    while (itFeatures != _featuresStates.end()) {
+    auto itFeatures = d->featuresStates.begin();
+    while (itFeatures != d->featuresStates.end()) {
         switch (itFeatures.value()) {
         case Qt::Checked:
             args << "-feature-" + itFeatures.key();
@@ -65,8 +68,8 @@ QStringList ConfigManager::createFeatures() const
 QStringList ConfigManager::createOptions() const
 {
     QStringList args;
-    auto itOptions = _optionsStates.begin();
-    while (itOptions != _optionsStates.end()) {
+    auto itOptions = d->optionsStates.begin();
+    while (itOptions != d->optionsStates.end()) {
         if (itOptions.value() != QVariant()) {
             auto opt = option(itOptions.key());
 
@@ -85,8 +88,8 @@ QStringList ConfigManager::createCommons() const
 {
     QStringList args;
 
-    auto modules = _submodules;
-    foreach (QString selectedModule, _selectedModules)
+    auto modules = d->submodules;
+    foreach (QString selectedModule, d->selectedModules)
         modules.removeAll(selectedModule);
 
     foreach (QString module, modules)
@@ -109,27 +112,44 @@ QStringList ConfigManager::createCommand(const ConfigManager::SaveParametereType
 
 void ConfigManager::setFeatureState(const QString &featureName, const Qt::CheckState &state)
 {
-    _featuresStates.insert(featureName, state);
+    d->featuresModel->setState(featureName, state);
+//    d->featuresStates.insert(featureName, state);
 }
 
 QVariant ConfigManager::optionState(const QString &name) const
 {
-    return _optionsStates.value(name);
+    if (d->optionsStates.value(name).isValid())
+    qDebug() << "state for" << name <<"is"<<d->optionsStates.value(name);
+    return d->optionsStates.value(name);
+}
+
+void ConfigManager::setOptionsState(const Option *option, const QVariant &state)
+{
+//    if (!option) {
+//        qDebug() << "The option" << option->name() << "not found!";
+//        return;
+//    }
+//    qDebug() << "setting" << option->name() << ":"<<state << "(" << option->typeString() << ")";
+
+//    if (option->type() == Option::AddString) {
+//        auto list = d->optionsStates.value(option->name()).toList();
+//        list.append(state);
+//        d->optionsStates.insert(option->name(), list);
+//    } else {
+//        d->optionsStates.insert(option->name(), state);
+//    }
+    d->optionsModel->setState(option->name(), state);
 }
 
 void ConfigManager::clearOptionsStates()
 {
-    _optionsStates.clear();
+    d->optionsStates.clear();
 }
 
 void ConfigManager::setOptionsState(const QString &optionName, const QVariant &state)
 {
-    if (!option(optionName)) {
-        qDebug() << "The option" << optionName << "not found!";
-        return;
-    }
-
-    _optionsStates.insert(optionName, state);
+//    setOptionsState(option(optionName), state);
+    d->optionsModel->setState(optionName, state);
 }
 
 QString ConfigManager::defaultPlatform() const
@@ -224,16 +244,16 @@ void ConfigManager::qmakeConfFile(const QString &path)
         }
         m = rVariable.match(line);
         if (m.hasMatch()) {
-            _configs.insert(m.captured(1));
+            d->configs.insert(m.captured(1));
         }
     }
 }
 
 void ConfigManager::readConfig()
 {
-    _configs.clear();
+    d->configs.clear();
     auto platform = defaultPlatform();
-    qmakeConfFile(m_sourcePath + "qtbase/mkspecs/" + platform + "/qmake.conf");
+    qmakeConfFile(d->sourcePath + "qtbase/mkspecs/" + platform + "/qmake.conf");
 }
 
 bool ConfigManager::confirmLicense() const
@@ -243,10 +263,10 @@ bool ConfigManager::confirmLicense() const
 
 bool ConfigManager::isSaveNeeded() const
 {
-    if (m_sourcePath.isEmpty() || m_buildPath.isEmpty())
+    if (d->sourcePath.isEmpty() || d->buildPath.isEmpty())
         return false;
 
-    if (_featuresStates.size() || _optionsStates.size())
+    if (d->featuresStates.size() || d->optionsStates.size())
         return true;
 
     return false;
@@ -254,12 +274,12 @@ bool ConfigManager::isSaveNeeded() const
 
 bool ConfigManager::hasConfig(const QString &name) const
 {
-    return _configs.contains(name);
+    return d->configs.contains(name);
 }
 
 QString ConfigManager::buildPath() const
 {
-    return m_buildPath;
+    return d->buildPath;
 }
 
 QString ConfigManager::installPath() const
@@ -270,21 +290,21 @@ QString ConfigManager::installPath() const
 QProcess *ConfigManager::createProcess() const
 {
     auto p = new QProcess;
-    p->setProgram(m_sourcePath + "configure");
+    p->setProgram(d->sourcePath + "configure");
     p->setArguments(createCommand());
-    p->setWorkingDirectory(m_buildPath);
+    p->setWorkingDirectory(d->buildPath);
     return p;
 }
 
 void ConfigManager::clearFeatureStates()
 {
-    _featuresStates.clear();
+    d->featuresStates.clear();
 }
 
 Qt::CheckState ConfigManager::featureState(const QString &featureName) const
 {
-    if (_featuresStates.contains(featureName))
-        return _featuresStates.value(featureName);
+    if (d->featuresStates.contains(featureName))
+        return d->featuresStates.value(featureName);
     return Qt::PartiallyChecked;
 }
 
@@ -295,7 +315,7 @@ QVariantList ConfigManager::nomake() const
 
 QStringList ConfigManager::devices() const
 {
-    return _devices;
+    return d->devices;
 }
 
 QByteArray ConfigManager::readFile(const QString &path)
@@ -323,75 +343,68 @@ void ConfigManager::readConfig(const QString &path, const QString &moduleName)
             readConfig(path + sub, moduleName);
         }
 
-    _options.append(c.options());
-    _features.append(c.features());
+    d->options.append(c.options());
+    d->features.append(c.features());
 }
 
 void ConfigManager::importSettings()
 {
     // Read configurations
-    QFile optFile(m_buildPath + "config.opt");
-    qDebug() << "Path="<< m_buildPath + "config.opt";
+    QFile optFile(d->buildPath + "config.opt");
     if (optFile.open(QIODevice::Text | QIODevice::ReadOnly)) {
 
-        QList<QByteArray> opts = optFile.readAll().split('\n');
+        QByteArrayList opts = optFile.readAll().split('\n');
         optFile.close();
 
-        _selectedModules = _submodules;
-        setConfirmLicense(opts.contains("-confirm-license"));
-        if (opts.contains("-opensource"))
-            setLicenseType(LicenceType::OpenSource);
-        else if (opts.contains("-commercial"))
-            setLicenseType(LicenceType::Commercial);
+        d->selectedModules = d->submodules;
 
         while (opts.count()) {
             auto ba = opts.takeFirst();
-
-            if (ba == "-prefix") {
-                setInstallPath(opts.takeFirst());
-                continue;
-            }
-
             if (ba.isEmpty())
                 continue;
 
-            if (ba.startsWith("-no-feature-")) {
-                setFeatureState(ba.replace("-no-feature-", ""), Qt::Unchecked);
+            if (!ba.startsWith("-")) {
+                qDebug() << "error in line:" << ba;
+            }
+            ba = ba.remove(0, 1);
+
+            if (ba.startsWith("no-feature-")) {
+                setFeatureState(ba.remove(0, 11), Qt::Unchecked);
                 continue;
             }
-            if (ba.startsWith("-feature-")) {
-                setFeatureState(ba.replace("-feature-", ""), Qt::Checked);
+            if (ba.startsWith("feature-")) {
+                setFeatureState(ba.remove(0, 8), Qt::Checked);
                 continue;
             }
 
-            if (ba == "-skip") {
-                ba = opts.takeFirst();
-                _selectedModules.removeOne(ba);
+            if (ba == "skip") {
+                d->selectedModules.removeOne(opts.takeFirst());
                 continue;
             }
-            //            if (ba == "-nomake") {
-            //                ba = opts.takeFirst();
-            //                _nomake.append(ba);
-            //                continue;
-            //            }
+
+            Option *o = nullptr;
 
             QString val;
-            Option *o = optionByOpt(ba, val);
+            if (!o)
+                o = optionByOpt(ba, val);
+
             if (o){
-                if (o->type == Option::AddString) {
-                    qDebug() << o->name << "need next line";
-                    opts.takeFirst();
-                }
+                QVariant var;
+                o->readCommandLine(val, var, opts);
+                if (var.isValid())
+                    setOptionsState(o, var);
             } else {
-                qDebug() << ba << "not found";
+                qWarning() << "Unknown parametere:" << ba;
             }
         }
+
+        emit configuresUpdated();
     }
 }
 
 void ConfigManager::deleteSettings()
 {
-    QDir dir(m_buildPath);
+    QDir dir(d->buildPath);
 
     dir.setFilter(QDir::NoDotAndDotDot | QDir::Files | QDir::Hidden);
     foreach( QString dirItem, dir.entryList() )
@@ -407,23 +420,20 @@ void ConfigManager::deleteSettings()
 
 Option *ConfigManager::option(const QString &name) const
 {
-    foreach(Option *o, _options)
-        if (o->name == name)
+    foreach(Option *o, d->options)
+        if (o->name() == name)
             return o;
     return nullptr;
 }
 
 Option *ConfigManager::optionByOpt(const QString &opt, QString &val)
 {
-    foreach(Option *o, _options) {
-        if (opt == o->name)
+    foreach(Option *o, d->options) {
+        if (opt == o->name())
             return o;
-        if (opt.endsWith(o->name)) {
-            val = opt;
-            val = val.replace(o->name, "");
-            val = val.mid(1, val.length() - 2);
-            if (!val.contains("-"))
-                return o;
+        if (opt.endsWith(o->name())) {
+            val = opt.mid(0, opt.length() - o->name().length() - 1 /* the One if for ending dash */ );
+            return o;
         }
     }
     return nullptr;
@@ -431,7 +441,7 @@ Option *ConfigManager::optionByOpt(const QString &opt, QString &val)
 
 Feature *ConfigManager::feature(const QString &name)
 {
-    foreach(Feature *f, _features)
+    foreach(Feature *f, d->features)
         if (f->name == name)
             return f;
     return nullptr;
@@ -439,27 +449,38 @@ Feature *ConfigManager::feature(const QString &name)
 
 QStringList ConfigManager::licenses() const
 {
-    return _licenses;
+    return d->licenses;
 }
 
-ConfigManager::ConfigManager()
+ConfigManager::ConfigManager() : d(new ConfigData)
 {
-
+    d->optionsModel = new OptionsModel(this);
+    d->featuresModel = new FeaturesModel(this);
 }
 
 QString ConfigManager::sourcePath() const
 {
-    return m_sourcePath;
+    return d->sourcePath;
 }
 
 void ConfigManager::process()
 {
-    _options.clear();
-    _features.clear();
-    foreach (QString module, _selectedModules)
-        if (_submodules.contains(module))
-            readConfig(m_sourcePath + module + "/", module);
+    d->options.clear();
+    d->features.clear();
+    foreach (QString module, d->selectedModules)
+        if (d->submodules.contains(module))
+            readConfig(d->sourcePath + module + "/", module);
     emit configuresUpdated();
+}
+
+OptionsModel *ConfigManager::optionsModel() const
+{
+    return d->optionsModel;
+}
+
+FeaturesModel *ConfigManager::featuresModel() const
+{
+    return d->featuresModel;
 }
 
 bool ConfigManager::save(const QString &path, const ConfigManager::SaveParametereType &params)
@@ -467,7 +488,7 @@ bool ConfigManager::save(const QString &path, const ConfigManager::SaveParameter
     QStringList opts;
     QString outPath;
     if (path == QString())
-        outPath = m_buildPath + "config.opt";
+        outPath = d->buildPath + "config.opt";
     else
         outPath = path;
 
@@ -482,12 +503,12 @@ bool ConfigManager::save(const QString &path, const ConfigManager::SaveParameter
     optFile.close();
 
     if (path == QString()) {
-        QFile statusFile(m_buildPath + "config.status");
+        QFile statusFile(d->buildPath + "config.status");
         if (!statusFile.open(QIODevice::Text | QIODevice::WriteOnly))
             return false;
 
         QString redoCommand = QString("#!/bin/sh\nexec %1configure -redo \"$@\"")
-                .arg(m_sourcePath);
+                .arg(d->sourcePath);
         statusFile.write(redoCommand.toLatin1());
         statusFile.close();
 
@@ -501,43 +522,43 @@ void ConfigManager::setSourcePath(QString sourcePath)
     if (!sourcePath.endsWith("/"))
         sourcePath .append("/");
 
-    if (m_sourcePath == sourcePath)
+    if (d->sourcePath == sourcePath)
         return;
 
     clear();
-    m_sourcePath = sourcePath;
+    d->sourcePath = sourcePath;
 
     // Read modules
-    QByteArray b = readFile(m_sourcePath + ".gitmodules");
+    QByteArray b = readFile(d->sourcePath + ".gitmodules");
     QRegularExpression r("\\[submodule \"(\\w+)\"\\]");
-    _submodules.clear();
+    d->submodules.clear();
     QRegularExpressionMatchIterator it = r.globalMatch(b);
     while (it.hasNext()) {
         QRegularExpressionMatch match = it.next();
         QString proFilePath = QString("%1/%2/%2.pro")
-                .arg(m_sourcePath, match.captured(1));
+                .arg(d->sourcePath, match.captured(1));
         if (QFile::exists(proFilePath))
-            _submodules.append(match.captured(1));
+            d->submodules.append(match.captured(1));
     }
     emit modulesUpdated();
-    setSelectedModules(_submodules);
+    setSelectedModules(d->submodules);
 
     // Read platforms
-    QDir mkspec(m_sourcePath + "qtbase/mkspecs/");
-    _platforms = platformsInDir(m_sourcePath + "qtbase/mkspecs/");
-    _devices = platformsInDir(m_sourcePath + "qtbase/mkspecs/devices/");
+    QDir mkspec(d->sourcePath + "qtbase/mkspecs/");
+    d->platforms = platformsInDir(d->sourcePath + "qtbase/mkspecs/");
+    d->devices = platformsInDir(d->sourcePath + "qtbase/mkspecs/devices/");
     emit platformsUpdated();
 
     // Read licenses
-    QDir licenses(m_sourcePath);
+    QDir licenses(d->sourcePath);
     auto licFiles = licenses.entryList(QStringList() << "LICENSE.*");
     foreach (QString l, licFiles)
-        _licenses.append(l.replace("LICENSE.", ""));
+        d->licenses.append(l.replace("LICENSE.", ""));
     emit licensesUpdated();
 
     readConfig();
 
-    emit sourcePathChanged(m_sourcePath);
+    emit sourcePathChanged(d->sourcePath);
 }
 
 void ConfigManager::setBuildPath(QString buildPath)
@@ -545,12 +566,12 @@ void ConfigManager::setBuildPath(QString buildPath)
     if (!buildPath.endsWith("/"))
         buildPath.append("/");
 
-    if (m_buildPath == buildPath)
+    if (d->buildPath == buildPath)
         return;
 
-    m_buildPath = buildPath;
+    d->buildPath = buildPath;
 
-    emit buildPathChanged(m_buildPath);
+    emit buildPathChanged(d->buildPath);
 }
 
 void ConfigManager::setInstallPath(QString installPath)
@@ -580,15 +601,15 @@ void ConfigManager::setLicenseType(const LicenceType &licenseType)
 
 void ConfigManager::clear()
 {
-    qDeleteAll(_options.begin(), _options.end());
-    qDeleteAll(_features.begin(), _features.end());
+    qDeleteAll(d->options.begin(), d->options.end());
+    qDeleteAll(d->features.begin(), d->features.end());
 
-    _options.clear();
-    _features.clear();
-    _platforms.clear();
-    _devices.clear();
-    _submodules.clear();
-    _licenses.clear();
+    d->options.clear();
+    d->features.clear();
+    d->platforms.clear();
+    d->devices.clear();
+    d->submodules.clear();
+    d->licenses.clear();
 }
 
 QStringList ConfigManager::platformsInDir(const QString &path)

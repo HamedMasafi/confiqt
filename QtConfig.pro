@@ -29,13 +29,20 @@ INCLUDEPATH += config models ui pages
 SOURCES += \
         config/condition.cpp \
         config/conditiondata.cpp \
+        config/configdata.cpp \
         config/configmanager.cpp \
+        config/option.cpp \
         models/featurefilterproxy.cpp \
         global.cpp \
         config/jsonconfig.cpp \
         main.cpp \
+        models/featuresmodel.cpp \
+        models/optionsfilterproxy.cpp \
+        models/optionsmodel.cpp \
         pages/pagecommon.cpp \
         pages/pageoptions.cpp \
+        ui/editors/abstractoptioneditor.cpp \
+        ui/editors/optionbooleditor.cpp \
         ui/optioneditwidget.cpp \
         ui/optionsselectdelegate.cpp \
         pages/pagecrosscompile.cpp \
@@ -58,12 +65,19 @@ SOURCES += \
 HEADERS += \
         config/condition.h \
         config/conditiondata.h \
+        config/configdata.h \
         config/configmanager.h \
+        config/option.h \
         models/featurefilterproxy.h \
         global.h \
         config/jsonconfig.h \
+        models/featuresmodel.h \
+        models/optionsfilterproxy.h \
+        models/optionsmodel.h \
         pages/pagecommon.h \
         pages/pageoptions.h \
+        ui/editors/abstractoptioneditor.h \
+        ui/editors/optionbooleditor.h \
         ui/optioneditwidget.h \
         ui/optionsselectdelegate.h \
         pages/pagecrosscompile.h \

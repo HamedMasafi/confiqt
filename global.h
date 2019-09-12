@@ -5,7 +5,7 @@
 #include <QString>
 #include <QVariantMap>
 
-struct Option {
+struct Option2 {
     enum Type {
         Unknown,
         Bool,
@@ -61,7 +61,7 @@ struct Option {
 
         return QVariant();
     }
-    QStringList applyValue(const QVariant &val) {
+    QStringList applyValue(const QVariant &val) const {
         switch (type) {
         case Unknown:
             return QStringList();
@@ -76,8 +76,19 @@ struct Option {
             break;
 
         case Enum:
+            if (val.type() == QVariant::String)
+                return QStringList() << "-" + val.toString() + "-" + name;
+            break;
+
+        case OptionalString: {
+            QStringList ret;
+            ret << "-name";
+            if (!val.toString().isEmpty())
+                ret << val.toString();
+            return ret;
+        }
+
         case String:
-        case OptionalString:
             if (val.type() == QVariant::String)
                 return QStringList() << "-" + name << val.toString();
             break;
@@ -101,7 +112,7 @@ struct Option {
         return QStringList();
     }
 };
-Q_DECLARE_METATYPE(Option*);
+Q_DECLARE_METATYPE(Option2*);
 
 struct Feature {
     QString name;
@@ -119,12 +130,6 @@ enum Roles {
     DropDownRole,
     TypeRole,
     DataRole
-};
-
-enum class FeatureTreeNodeType {
-    Module,
-    Section,
-    Feature
 };
 
 class Global

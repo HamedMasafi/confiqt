@@ -47,7 +47,7 @@ bool PageSelectPaths::validatePage()
     _config->setBuildPath(lineEditBuildPath->text());
     _config->setInstallPath(lineEditInstallPath->text());
 
-    if (QFile::exists(lineEditBuildPath->text() + "/.qmake.stash")) {
+    if (QFile::exists(lineEditBuildPath->text() + "/config.opt")) {
         QMessageBox msg;
         msg.setText(R"(The selected build path contain files from previus build <br />
                     Choose desired action:

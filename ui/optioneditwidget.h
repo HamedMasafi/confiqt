@@ -3,6 +3,7 @@
 
 #include "ui_optioneditwidget.h"
 #include "global.h"
+#include "option.h"
 
 #define FOREACH_PAGE(x) \
     x(Bool) \
@@ -12,10 +13,12 @@
     x(StringsSelection)
 
 class QListWidget;
+class Option;
 class OptionEditWidget : public QWidget, private Ui::OptionEditWidget
 {
     Q_OBJECT
     bool reseted;
+    Option *_option;
     Option::Type _type;
     QListWidget *checkableListWidget;
 
@@ -32,6 +35,9 @@ public:
     void setType(const Option::Type &type);
     void setDropDown(const QVariant &dropDownData);
     void setValue(const QVariant &value);
+
+    Option *option() const;
+    void setOption(Option *option);
 
 private slots:
     void valueSet();

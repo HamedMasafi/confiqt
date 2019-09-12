@@ -94,6 +94,8 @@ void QtLiteDialog::on_featuresRequest_finished(QVariant data)
 
 void QtLiteDialog::on_comboBoxModules_activated(const QString &s)
 {
+    listWidgetModules->clear();
+    listWidgetFeatures->clear();
     tag = s;
     modulesRequest->setUrl(QUrl("https://qtlite.com/modules.json?tag=" + s));
     modulesRequest->send();
@@ -102,6 +104,7 @@ void QtLiteDialog::on_comboBoxModules_activated(const QString &s)
 void QtLiteDialog::on_buttonBox_clicked(QAbstractButton *button)
 {
     if (button == refreashFeaturesButton) {
+        listWidgetFeatures->clear();
         QString url = "https://qtlite.com/features.json?tag=" + tag;
         for (int i = 0; i < listWidgetModules->count(); ++i) {
             auto item = listWidgetModules->item(i);
@@ -111,6 +114,12 @@ void QtLiteDialog::on_buttonBox_clicked(QAbstractButton *button)
         featuresRequest->setUrl(QUrl(url));
         featuresRequest->send();
     }
+}
+
+void QtLiteDialog::on_pushButtonSelectAll_clicked()
+{
+    for (int i = 0; i < listWidgetModules->count(); ++i)
+        listWidgetModules->item(i)->setCheckState(Qt::Checked);
 }
 
 #endif

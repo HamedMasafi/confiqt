@@ -1,4 +1,5 @@
 #include "jsonconfig.h"
+#include "option.h"
 
 #include <QFile>
 #include <QDebug>
@@ -61,19 +62,15 @@ QList<Option*> JsonConfig::options() const
     QList<Option*> ret;
     foreach (QString key, options.keys()) {
         QJsonValue v = options.value(key);
-        Option *o = new Option;
-        o->name = key;
-        o->moduleName = _moduleName;
-        o->filePath = _filePath;
+        Option *o = Option::fromJson(v);
+        o->_name = key;
+        o->_moduleName = _moduleName;
+        o->_filePath = _filePath;
 
-        if (v.isString())
-            o->setType(v.toString());
-        else if (v.isObject()) {
+        if (v.isObject()) {
             QJsonObject obj = v.toObject();
-            o->setType(obj.value("type").toString());
-
             QVariant vv = obj.value("values").toVariant();
-            o->values = vv;
+            o->_values = vv;
         }
         ret.append(o);
     }

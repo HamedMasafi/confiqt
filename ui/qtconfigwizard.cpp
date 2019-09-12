@@ -37,6 +37,7 @@ QtConfigWizard::QtConfigWizard(QWidget *parent) :
                        << _indexLicense
                        << _indexCommon
                        << _indexFeatures
+                       << _indexOptions
                        << _indexSelectBuildMethod
                        << _indexRun
                        << _indexFinish;

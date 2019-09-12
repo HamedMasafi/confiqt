@@ -1,5 +1,6 @@
 #include "global.h"
 #include "featurefilterproxy.h"
+#include "featuresmodel.h"
 
 FeatureFilterProxy::FeatureFilterProxy(QObject *parent) : QSortFilterProxyModel(parent)
 {
@@ -47,11 +48,11 @@ bool FeatureFilterProxy::filterAcceptsRow(int source_row, const QModelIndex &sou
 
 bool FeatureFilterProxy::hasToBeDisplayed(const QModelIndex index) const
 {
-    FeatureTreeNodeType type = static_cast<FeatureTreeNodeType>(sourceModel()->data(index, TypeRole).toInt());
+    auto node = static_cast<FeaturesModel::Node*>(index.internalPointer());
     bool result = false;
 
-    if (type == FeatureTreeNodeType::Module || type == FeatureTreeNodeType::Section) {
-        if (type == FeatureTreeNodeType::Module
+    if (node->type == FeaturesModel::Node::Module || node->type == FeaturesModel::Node::Section) {
+        if (node->type == FeaturesModel::Node::Module
                 && !m_moduleName.isEmpty()
                 && sourceModel()->data(index).toString() != m_moduleName)
             return false;
@@ -67,14 +68,11 @@ bool FeatureFilterProxy::hasToBeDisplayed(const QModelIndex index) const
         return result;
     }
 
-    if (type != FeatureTreeNodeType::Feature)
+    if (node->type != FeaturesModel::Node::Feature)
         return true;
 
     if (m_searchName.isEmpty())
         return true;
 
-    QVariant v = sourceModel()->data(index, DataRole);
-    Feature *ft = v.value<Feature*>();
-    return ft->name.contains(m_searchName, Qt::CaseInsensitive);
-
+    return node->feature->name.contains(m_searchName, Qt::CaseInsensitive);
 }

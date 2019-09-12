@@ -28,6 +28,7 @@ private slots:
     void on_featuresRequest_finished(QVariant data);
     void on_comboBoxModules_activated(const QString &arg1);
     void on_buttonBox_clicked(QAbstractButton *button);
+    void on_pushButtonSelectAll_clicked();
 };
 
 #endif

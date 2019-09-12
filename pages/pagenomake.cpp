@@ -1,4 +1,6 @@
 #include "pagenomake.h"
+#include "option.h"
+
 #include <QDebug>
 
 PageNoMake::PageNoMake(ConfigManager *config, QWidget *parent) :
@@ -16,8 +18,8 @@ void PageNoMake::config_configuresUpdated()
     Option *nomake = _config->option("nomake");
     if (nomake == nullptr)
         return;
-    if (nomake->values.type() == QVariant::List) {
-        auto list = nomake->values.toList();
+    if (nomake->values().type() == QVariant::List) {
+        auto list = nomake->values().toList();
         foreach (QVariant v, list) {
             QListWidgetItem *item = new QListWidgetItem(v.toString(), listWidgetNoMake);
             item->setFlags(item->flags() | Qt::ItemIsEditable);

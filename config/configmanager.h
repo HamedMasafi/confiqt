@@ -1,6 +1,7 @@
 #ifndef CONFIGMANAGER_H
 #define CONFIGMANAGER_H
 
+#include "configdata.h"
 #include "global.h"
 
 #include <QJsonObject>
@@ -14,6 +15,8 @@ class ConfigManager : public QObject
 
     Q_PROPERTY(QString sourcePath READ sourcePath WRITE setSourcePath NOTIFY sourcePathChanged)
     Q_PROPERTY(QString buildPath READ buildPath WRITE setBuildPath NOTIFY buildPathChanged)
+
+    QExplicitlySharedDataPointer<ConfigData> d;
 
 public:
     enum class LicenceType {
@@ -65,6 +68,7 @@ public:
     // options
     void clearOptionsStates();
     QVariant optionState(const QString &name) const;
+    void setOptionsState(const Option *option, const QVariant &state);
     void setOptionsState(const QString &optionName, const QVariant &state);
     Option *option(const QString &name) const;
     Option *optionByOpt(const QString &opt, QString &val);
@@ -87,6 +91,9 @@ public:
 
     void process();
 
+    //models
+    OptionsModel *optionsModel() const;
+    FeaturesModel *featuresModel() const;
 public slots:
     void setSourcePath(QString sourcePath);
     void setBuildPath(QString buildPath);
@@ -106,27 +113,30 @@ signals:
 
 private:
 
-    QStringList _submodules;
-    QStringList _selectedModules;
-    QStringList _platforms;
-    QStringList _devices;
-    QList<Option*> _options;
-    QList<Feature*> _features;
-    QStringList _licenses;
-    QSet<QString> _configs;
+//    QStringList _submodules;
+//    QStringList _selectedModules;
+//    QStringList _platforms;
+//    QStringList _devices;
+//    QList<Option*> _options;
+//    QList<Feature*> _features;
+//    QStringList _licenses;
+//    QSet<QString> _configs;
 
-    QMap<QString, Qt::CheckState> _featuresStates;
-    QMap<QString, QVariant> _optionsStates;
+//    QMap<QString, Qt::CheckState> _featuresStates;
+//    QMap<QString, QVariant> _optionsStates;
 
-    QString m_sourcePath;
-    QString m_buildPath;
-    LicenceType _licenseType;
+//    QString m_sourcePath;
+//    QString m_buildPath;
+//    LicenceType _licenseType;
 
     void clear();
     QStringList platformsInDir(const QString &path);
     QByteArray readFile(const QString &path);
     void readConfig(const QString &path, const QString &moduleName);
     void qmakeConfFile(const QString &path);
+
+    friend class OptionsModel;
+    friend class FeaturesModel;
 };
 
 #endif // CONFIGMANAGER_H

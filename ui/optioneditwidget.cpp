@@ -6,13 +6,26 @@
 
 #include "optioneditwidget.h"
 
+Option *OptionEditWidget::option() const
+{
+    return _option;
+}
+
+void OptionEditWidget::setOption(Option *option)
+{
+    setType(option->type());
+    setDropDown(option->dropDown());
+    setValue(option->value());
+    _option = option;
+}
+
 OptionEditWidget::OptionEditWidget(QWidget *parent) :
-    QWidget(parent), reseted(false)
+    QWidget(parent), reseted(false), _option(nullptr)
 {
     setupUi(this);
-    checkableListWidget = new QListWidget(this);
-    comboBoxCheckable->setModel(checkableListWidget->model());
-    comboBoxCheckable->setView(checkableListWidget);
+//    checkableListWidget = new QListWidget(this);
+//    comboBoxCheckable->setModel(checkableListWidget->model());
+//    comboBoxCheckable->setView(checkableListWidget);
 
     toolButtonBrowse->hide();
 
@@ -45,10 +58,10 @@ QVariant OptionEditWidget::value() const
     case Option::AddString: {
         if (stackedWidget->currentWidget() == pageStringsSelection) {
             QVariantList ret;
-            for (int i = 0; i < comboBoxCheckable->count(); ++i) {
-                if (comboBoxCheckable->itemData(i, Qt::CheckStateRole) == Qt::Checked)
-                    ret.append(comboBoxCheckable->itemText(i));
-            }
+//            for (int i = 0; i < comboBoxCheckable->count(); ++i) {
+//                if (comboBoxCheckable->itemData(i, Qt::CheckStateRole) == Qt::Checked)
+//                    ret.append(comboBoxCheckable->itemText(i));
+//            }
             return ret;
         } else {
             return plainEditComboStrings->value();
@@ -106,7 +119,12 @@ void OptionEditWidget::setType(const Option::Type &type)
 
     switch (type) {
     case Option::Bool:
+        checkBox->setTristate(true);
+        stackedWidget->setCurrentWidget(pageBool);
+        toolButtonReset->show();
+        break;
     case Option::Void:
+        checkBox->setTristate(false);
         stackedWidget->setCurrentWidget(pageBool);
         toolButtonReset->show();
         break;
@@ -144,16 +162,16 @@ void OptionEditWidget::setDropDown(const QVariant &dropDownData)
                 _comboBox->addItem(v.toString());
         }
         if (_type == Option::AddString) {
-            checkableListWidget->clear();
-            auto list = dropDownData.toList();
-            foreach (QVariant v, list) {
-                auto item = new QListWidgetItem(checkableListWidget);
-                item->setText(v.toString());
-                item->setFlags(item->flags() | Qt::ItemIsSelectable);
-                item->setCheckState(Qt::Unchecked);
-                checkableListWidget->addItem(item);
-            }
-            stackedWidget->setCurrentWidget(pageStringsSelection);
+//            checkableListWidget->clear();
+//            auto list = dropDownData.toList();
+//            foreach (QVariant v, list) {
+//                auto item = new QListWidgetItem(checkableListWidget);
+//                item->setText(v.toString());
+//                item->setFlags(item->flags() | Qt::ItemIsSelectable);
+//                item->setCheckState(Qt::Unchecked);
+//                checkableListWidget->addItem(item);
+//            }
+//            stackedWidget->setCurrentWidget(pageStringsSelection);
         }
     }
 }

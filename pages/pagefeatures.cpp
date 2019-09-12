@@ -6,6 +6,7 @@
 #include <QKeyEvent>
 #include <QMessageBox>
 #include <QStandardItemModel>
+#include <featuresmodel.h>
 #include <qtlitedialog.h>
 
 PageFeatures::PageFeatures(ConfigManager *config, QWidget *parent)
@@ -13,11 +14,13 @@ PageFeatures::PageFeatures(ConfigManager *config, QWidget *parent)
 {
     setupUi(this);
 
-    featuresModel = new QStandardItemModel(this);
+    featuresModel = _config->featuresModel();
     featuresFilter = new FeatureFilterProxy(this);
     featuresFilter->setFilterKeyColumn(0);
-    treeView->setModel(featuresFilter);
+    featuresFilter->setSourceModel(featuresModel);
     treeView->installEventFilter(this);
+
+    treeView->setModel(featuresFilter);
     connect(_config, &ConfigManager::configuresUpdated,
             this, &PageFeatures::config_configuresUpdated);
 
@@ -32,89 +35,8 @@ void PageFeatures::config_configuresUpdated()
     comboBoxModules->addItem("");
     comboBoxModules->addItems(_config->selectedModules());
 
-    QList<Feature*> opts = _config->features();
-    std::sort(opts.begin(), opts.end(), [](const Feature *l, const Feature *r) -> bool{
-        if (l->moduleName < r->moduleName)
-            return true;
-        if (l->moduleName == r->moduleName) {
-            if (l->section.isEmpty() || r->section.isEmpty())
-                return l->section.size() > r->section.size();
-
-            if (l->section < r->section)
-                return true;
-
-            if (l->section == r->section)
-                return l->name < r->name;
-        }
-        return false;
-    });
-
-    QMap<QString, QStandardItem*> rootItems;
-    featuresModel->clear();
-    featuresModel->setHorizontalHeaderLabels(QStringList() << "Name" << "Value");
-    featuresModel->setColumnCount(2);
-
-    for (int i = 0; i < opts.count(); ++i) {
-        auto k = opts.at(i);
-
-        QStandardItem *moduleItem;
-        if (rootItems.contains(k->moduleName)) {
-            moduleItem = rootItems.value(k->moduleName);
-        } else {
-            moduleItem = new QStandardItem(k->moduleName);
-            moduleItem->setColumnCount(2);
-            moduleItem->setData(static_cast<int>(FeatureTreeNodeType::Module), TypeRole);
-            rootItems.insert(k->moduleName, moduleItem);
-            featuresModel->appendRow(moduleItem);
-        }
-
-        QStandardItem *item = new QStandardItem(k->name);
-        item->setData(QVariant::fromValue(k), DataRole);
-        item->setData(static_cast<int>(FeatureTreeNodeType::Feature), TypeRole);
-
-        QStandardItem *checkItem = new QStandardItem;
-        auto checkState = _config->featureState(k->name);
-        QString text;
-        QVariant color;
-        switch (checkState) {
-        case Qt::Checked:
-            text = "Yes";
-            color = QColor(Qt::green);
-            break;
-        case Qt::Unchecked:
-            text = "No";
-            color = QColor(Qt::red);
-            break;
-        case Qt::PartiallyChecked:
-            break;
-        }
-        if (checkState != Qt::PartiallyChecked)
-            qDebug() << k->name << checkState;
-        checkItem->setData(checkState, CheckStateRole);
-        checkItem->setData(text, Qt::DisplayRole);
-        checkItem->setData(color, Qt::DecorationRole);
-
-        if (k->section.isEmpty()) {
-            moduleItem->appendRow(QList<QStandardItem*>()<< item << checkItem);
-        } else {
-            QStandardItem *sectionItem = nullptr;
-            for (int i = 0; i < moduleItem->rowCount(); ++i) {
-                if (moduleItem->child(i)->text() == k->section) {
-                    sectionItem = moduleItem->child(i);
-                    break;
-                }
-            }
-            if (sectionItem == nullptr) {
-                sectionItem = new QStandardItem(k->section);
-                sectionItem->setData(static_cast<int>(FeatureTreeNodeType::Section), TypeRole);
-                sectionItem->setColumnCount(2);
-                moduleItem->appendRow(sectionItem);
-            }
-            sectionItem->appendRow(QList<QStandardItem*>()<< item << checkItem);
-        }
-    }
-    featuresFilter->setSourceModel(featuresModel);
     treeView->header()->setSectionResizeMode(0, QHeaderView::Stretch);
+    treeView->header()->setSectionResizeMode(1, QHeaderView::Interactive);
 }
 
 void PageFeatures::on_pushButtonFeatureInclude_clicked()
@@ -152,13 +74,9 @@ void PageFeatures::setSelectedFeaturesState(const Qt::CheckState &state)
     auto selectionModel = treeView->selectionModel();
     foreach (QModelIndex idx, selectionModel->selectedIndexes()){
         auto mapped = featuresFilter->mapToSource(idx);
-        auto i = featuresModel->index(mapped.row(), 1, mapped.parent());
-        auto v = featuresModel->index(mapped.row(), 0, mapped.parent()).data(DataRole);
-        if (v.isValid()) {
-            featuresModel->setData(i, state, CheckStateRole);
-            featuresModel->setData(i, text, Qt::DisplayRole);
-            featuresModel->setData(i, color, Qt::DecorationRole);
-        }
+        auto ft = featuresModel->feature(mapped);
+        if (ft)
+            featuresModel->setState(ft->name, state);
     }
 }
 
@@ -203,18 +121,17 @@ void PageFeatures::checkItem(QStandardItem *item) {
 bool PageFeatures::validatePage()
 {
     _config->clearFeatureStates();
-    for (int i = 0; i < featuresModel->rowCount(); ++i) {
-        auto moduleItem = featuresModel->item(i, 0);
-        checkItem(moduleItem);
-    }
+//    for (int i = 0; i < featuresModel->rowCount(); ++i) {
+//        auto moduleItem = featuresModel->item(i, 0);
+//        checkItem(moduleItem);
+//    }
     return true;
 }
 
 void PageFeatures::on_treeView_activated(const QModelIndex &index)
 {
-    QVariant v = featuresFilter->mapToSource(index).data(DataRole);
-    if (v.isValid()) {
-        Feature *ft = v.value<Feature*>();
+    auto ft = featuresModel->feature(featuresFilter->mapToSource(index));
+    if (ft) {
         auto condition = ft->condition.join(" && ");
         cond = Condition(condition, _config);
         cond.check();
@@ -234,8 +151,6 @@ void PageFeatures::on_treeView_activated(const QModelIndex &index)
             labelCondition->setText(QString(cc ? "True" : "False") + " (<a href=#>Explain</a>)");
 //        }
 //        qDebug() << cond.check() << condition;
-    } else {
-        qDebug() << v;
     }
 }
 
@@ -251,7 +166,7 @@ void PageFeatures::on_comboBoxModules_currentTextChanged(const QString &s)
 
 void PageFeatures::on_labelCondition_linkActivated(const QString &link)
 {
-    Q_UNUSED(link);
+    Q_UNUSED(link)
     QMessageBox::information(this, "Condition result",
                              cond.cond() + "\n" +
                              cond.toString());
