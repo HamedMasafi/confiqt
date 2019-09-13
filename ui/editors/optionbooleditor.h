@@ -6,6 +6,8 @@
 
 class OptionBoolEditor : public QCheckBox, public AbstractOptionEditor
 {
+    Q_OBJECT
+
 public:
     OptionBoolEditor();
 
@@ -13,6 +15,8 @@ public:
 public:
     QVariant value() const;
     void setValue(const QVariant &value);
+private slots:
+    void me_stateChanged(int);
 };
 
 #endif // OPTIONBOOLEDITOR_H

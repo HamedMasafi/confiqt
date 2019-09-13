@@ -46,6 +46,7 @@ SOURCES += \
         ui/editors/multistringeditor.cpp \
         ui/editors/multistringselector.cpp \
         ui/editors/optionbooleditor.cpp \
+        ui/editors/stringeditor.cpp \
         ui/optioneditwidget.cpp \
         ui/optionsselectdelegate.cpp \
         pages/pagecrosscompile.cpp \
@@ -84,6 +85,7 @@ HEADERS += \
         ui/editors/multistringeditor.h \
         ui/editors/multistringselector.h \
         ui/editors/optionbooleditor.h \
+        ui/editors/stringeditor.h \
         ui/optioneditwidget.h \
         ui/optionsselectdelegate.h \
         pages/pagecrosscompile.h \

@@ -18,8 +18,8 @@ public:
 public:
     QVariant value() const;
     void setValue(const QVariant &value);
+    void setDropDown(const QStringList &list);
 
-    // CustomComboBox interface
 protected:
     QWidget *createEditor();
 private slots:
