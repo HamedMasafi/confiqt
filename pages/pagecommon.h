@@ -8,10 +8,11 @@ class PageCommon : public WizardPageBase, private Ui::PageCommon
 {
     Q_OBJECT
 
+    QMap<QCheckBox*, QString> map;
+
 public:
     explicit PageCommon(ConfigManager *config, QWidget *parent = nullptr);
 
-    // QWizardPage interface
 public:
     bool validatePage();
 private slots:

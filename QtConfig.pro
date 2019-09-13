@@ -41,7 +41,10 @@ SOURCES += \
         models/optionsmodel.cpp \
         pages/pagecommon.cpp \
         pages/pageoptions.cpp \
+        ui/customcombobox.cpp \
         ui/editors/abstractoptioneditor.cpp \
+        ui/editors/multistringeditor.cpp \
+        ui/editors/multistringselector.cpp \
         ui/editors/optionbooleditor.cpp \
         ui/optioneditwidget.cpp \
         ui/optionsselectdelegate.cpp \
@@ -76,7 +79,10 @@ HEADERS += \
         models/optionsmodel.h \
         pages/pagecommon.h \
         pages/pageoptions.h \
+        ui/customcombobox.h \
         ui/editors/abstractoptioneditor.h \
+        ui/editors/multistringeditor.h \
+        ui/editors/multistringselector.h \
         ui/editors/optionbooleditor.h \
         ui/optioneditwidget.h \
         ui/optionsselectdelegate.h \

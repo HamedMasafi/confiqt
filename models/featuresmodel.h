@@ -57,6 +57,7 @@ class FeaturesModel : public QAbstractItemModel
 
         void clear() {
             qDeleteAll(childs);
+            childs.clear();
         }
     };
 
@@ -72,6 +73,7 @@ private slots:
 public:
     Feature *feature(const QModelIndex &index) const;
     void setState(const QString &name, const Qt::CheckState &state);
+    void setState(const QModelIndex &index, const Qt::CheckState &state);
     QModelIndex index(const Node *node, int col) const;
 
     int rowCount(const QModelIndex &parent) const override;

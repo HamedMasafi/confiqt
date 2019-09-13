@@ -7,25 +7,39 @@ PageCommon::PageCommon(ConfigManager *config, QWidget *parent) :
 
     connect(_config, &ConfigManager::configuresUpdated,
             this, &PageCommon::config_configuresUpdated);
+
+    map.insert(checkBoxDeveloperBuild, "developer-build");
+    map.insert(checkBoxStatic, "static");
+    map.insert(checkBoxDebugAndRelease, "debug_and_release");
+    map.insert(checkBoxReleaseTools, "release_tools");
+    map.insert(checkBoxForceDebugInfo, "force_debug_info");
+
+    map.insert(checkBoxBuildForDebug, "debug");
+    map.insert(checkBoxSeprateDebugInfo, "separate_debug_info");
+
+    map.insert(checkBoxOptimizeDebug, "optimize_debug");
+    map.insert(checkBoxOptimizeForSize, "optimize_size");
 }
 
 void PageCommon::config_configuresUpdated()
 {
-    checkBoxStatic->setChecked(_config->optionState("static").toString() == "yes");
-    checkBoxDeveloperBuild->setChecked(_config->optionState("developer-build").toBool());
-    checkBoxOptimizeForSize->setChecked(_config->optionState("optimize-size").toBool());
+    auto i = map.begin();
+    while (i != map.end()) {
+        i.key()->setChecked(_config->featureState(i.value()) == Qt::Checked);
+        ++i;
+    }
 }
 
 bool PageCommon::validatePage()
 {
-    if (checkBoxDeveloperBuild->isChecked())
-        _config->setOptionsState("developer-build", true);
-
-    if (checkBoxStatic->isChecked())
-        _config->setOptionsState("static", "yes");
-
-    if (checkBoxOptimizeForSize->isChecked())
-        _config->setOptionsState("optimize-size", true);
+    auto i = map.begin();
+    while (i != map.end()) {
+        if (i.key()->isChecked())
+            _config->setFeatureState(i.value(), Qt::Checked);
+        else
+            _config->setFeatureState(i.value(), Qt::PartiallyChecked);
+        ++i;
+    }
 
     return true;
 }

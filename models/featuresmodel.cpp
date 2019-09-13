@@ -74,8 +74,8 @@ QVariant FeaturesModel::data(const QModelIndex &index, int role) const
 void FeaturesModel::config_configuresUpdated()
 {
     beginRemoveRows(QModelIndex(), 0, rootNode->childs.count() - 1);
-    endRemoveRows();
     rootNode->clear();
+    endRemoveRows();
 
     QList<Feature*> opts = _config->features();
     std::sort(opts.begin(), opts.end(), [](const Feature *l, const Feature *r) -> bool{
@@ -159,12 +159,22 @@ void FeaturesModel::setState(const QString &name, const Qt::CheckState &state)
     if (node) {
         auto s1 = data(index(node, 0), Qt::DisplayRole).toString();
         auto s2 = node->title;
-        if (s1 != s2)
+//        if (s1 != s2)
             qDebug() << s1 << " != " << s2;
 
         d->featuresStates.insert(node->feature->name, state);
         emit dataChanged(index(node, 0), index(node, 1));
     }
+}
+
+void FeaturesModel::setState(const QModelIndex &index, const Qt::CheckState &state)
+{
+    auto node = static_cast<Node*>(index.internalPointer());
+    if (node->type != Node::Feature)
+        return;
+
+    d->featuresStates.insert(node->feature->name, state);
+    emit dataChanged(index, index);
 }
 
 QModelIndex FeaturesModel::index(const FeaturesModel::Node *node, int col) const

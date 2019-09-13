@@ -94,7 +94,7 @@ bool Condition::check()
              step++;
              continue;
          }
-         if (ch.isLetter() || ch.isDigit() || ch == '_') {
+         if (ch.isLetter() || ch.isDigit() || ch == '_' || ch == '-') {
              if (!lastIsLetter)
                  step++;
              if (step == 1)

@@ -74,9 +74,7 @@ void PageFeatures::setSelectedFeaturesState(const Qt::CheckState &state)
     auto selectionModel = treeView->selectionModel();
     foreach (QModelIndex idx, selectionModel->selectedIndexes()){
         auto mapped = featuresFilter->mapToSource(idx);
-        auto ft = featuresModel->feature(mapped);
-        if (ft)
-            featuresModel->setState(ft->name, state);
+        featuresModel->setState(mapped, state);
     }
 }
 
@@ -135,6 +133,7 @@ void PageFeatures::on_treeView_activated(const QModelIndex &index)
         auto condition = ft->condition.join(" && ");
         cond = Condition(condition, _config);
         cond.check();
+        labelName->setText(ft->name);
         labelLabel->setText(ft->label);
         labelSection->setText(ft->section);
         labelPurpose->setText(ft->purpose);

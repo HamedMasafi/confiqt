@@ -14,6 +14,7 @@ public:
 
     virtual QVariant value() const;
     virtual void setValue(const QVariant &value);
+    virtual void setDropDown(const QStringList &list);
 };
 
 #endif // ABSTRACTOPTIONEDITOR_H

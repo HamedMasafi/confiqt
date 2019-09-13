@@ -45,13 +45,13 @@ Option *OptionsModel::option(const QModelIndex &index) const
 
 int OptionsModel::rowCount(const QModelIndex &parent) const
 {
-    Q_UNUSED(parent);
+    Q_UNUSED(parent)
     return d->options.count();
 }
 
 int OptionsModel::columnCount(const QModelIndex &parent) const
 {
-    Q_UNUSED(parent);
+    Q_UNUSED(parent)
     return 3;
 }
 
