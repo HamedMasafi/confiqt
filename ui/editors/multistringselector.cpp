@@ -1,12 +1,14 @@
 #include "multistringselector.h"
 
 #include <QListWidget>
+#include <customcombobox.h>
 
-MultiStringSelector::MultiStringSelector()
+MultiStringSelector::MultiStringSelector(QWidget *parent) : AbstractOptionEditor(parent), editor(nullptr)
 {
-    editor = new QListWidget(this);
-    editor->setWindowFlag(Qt::Popup, true);
+    comboBox = new CustomComboBox(this);
+    editor = new QListWidget;
     editor->hide();
+    comboBox->setPopup(editor);
     connect(editor, &QListWidget::itemChanged,
             this, &MultiStringSelector::editor_itemChanged);
 }
@@ -22,7 +24,12 @@ void MultiStringSelector::editor_itemChanged(QListWidgetItem *item)
             s.append(editor->item(i)->text());
         }
     }
-    setText(s);
+    comboBox->setText(s);
+}
+
+QWidget *MultiStringSelector::createWidget()
+{
+    return comboBox;
 }
 
 QVariant MultiStringSelector::value() const
@@ -58,9 +65,4 @@ void MultiStringSelector::setDropDown(const QStringList &list)
         item->setText(v.toString());
         item->setCheckState(Qt::Unchecked);
     }
-}
-
-QWidget *MultiStringSelector::createEditor()
-{
-    return editor;
 }

@@ -5,22 +5,19 @@
 #include "customcombobox.h"
 
 class QPlainTextEdit;
-class MultiStringEditor : public CustomComboBox, public AbstractOptionEditor
+class CustomComboBox;
+class MultiStringEditor : public AbstractOptionEditor
 {
     Q_OBJECT
+    CustomComboBox *comboBox;
     QPlainTextEdit *editor;
 
 public:
-    MultiStringEditor();
+    MultiStringEditor(QWidget *parent = nullptr);
+    QVariant value() const override;
+    void setValue(const QVariant &value) override;
+    QWidget *createWidget() override;
 
-    // CustomComboBox interface
-protected:
-    QWidget *createEditor();
-
-    // AbstractOptionEditor interface
-public:
-    QVariant value() const;
-    void setValue(const QVariant &value);
 private slots:
     void editor_textChanged();
 };

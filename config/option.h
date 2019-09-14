@@ -24,7 +24,7 @@ public:
 
     static Option *fromJson(const QJsonValue& json);
     static Option *fromType(const QString &type);
-    virtual QVariant dropDown() const;
+    virtual QStringList dropDown() const;
     virtual QStringList applyValue(const QVariant &val) const = 0;
     virtual bool readCommandLine(const QString &arg, QVariant &var, QByteArrayList &opts) = 0;
 
@@ -80,7 +80,7 @@ public:
     OptionEnum();
     virtual ~OptionEnum() override;
 
-    QVariant dropDown() const override;
+    QStringList dropDown() const override;
     QStringList applyValue(const QVariant &val) const override;
     bool readCommandLine(const QString &arg, QVariant &var, QByteArrayList &opts) override;
 };
@@ -111,7 +111,7 @@ public:
     OptionAddString();
     virtual ~OptionAddString() override;
 
-    QVariant dropDown() const override;
+    QStringList dropDown() const override;
     QStringList applyValue(const QVariant &val) const override;
     bool readCommandLine(const QString &arg, QVariant &var, QByteArrayList &opts) override;
     QString displayText() const override;

@@ -1,8 +1,18 @@
 #include "global.h"
-#include "optioneditwidget.h"
 #include "optionsselectdelegate.h"
 
+#include <QToolButton>
 #include <QDebug>
+#include <option.h>
+
+#include <editors/multistringeditor.h>
+#include <editors/optionbooleditor.h>
+#include <editors/multistringselector.h>
+#include <editors/stringeditor.h>
+#include <editors/pathselecteditor.h>
+#include <editors/comboselector.h>
+#include <editors/voideditor.h>
+#include <editors/optionalstringeditor.h>
 
 OptionsSelectDelegate::OptionsSelectDelegate(QObject *parent) : QItemDelegate(parent)
 {
@@ -10,52 +20,56 @@ OptionsSelectDelegate::OptionsSelectDelegate(QObject *parent) : QItemDelegate(pa
 
 QWidget *OptionsSelectDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    Q_UNUSED(option);
-    Q_UNUSED(index);
-    qDebug() << Q_FUNC_INFO;
-    return new OptionEditWidget(parent);
+    Q_UNUSED(option)
+    auto o = index.data(DataRole).value<Option*>();
+    AbstractOptionEditor *editor = nullptr;
 
-//    auto w = new QWidget(parent);
-//    auto l = new QHBoxLayout(w);
-//    l->addWidget(new QWidget);
-//    l->addWidget(new QToolButton);
-//    w->setLayout(l);
-//    return w;
+    switch (o->type()) {
+    case Option::Unknown:
+        break;
+    case Option::Bool:
+        editor = new OptionBoolEditor(parent);
+        break;
+    case Option::Enum:
+        editor = new ComboSelector(parent);
+        break;
+    case Option::String:
+        if (o->name().endsWith("dir"))
+            editor = new PathSelectEditor(parent);
+        else
+            editor = new StringEditor(parent);
+        break;
+    case Option::OptionalString:
+        editor = new OptionalStringEditor(parent);
+        break;
+    case Option::AddString:
+        if (o->dropDown() == QVariant())
+            editor = new MultiStringEditor(parent);
+        else
+            editor = new MultiStringSelector(parent);
+        break;
+    case Option::Void:
+        editor = new VoidEditor(parent);
+        break;
+    }
+
+    if (o->dropDown() != QStringList())
+        qDebug() << "Dropdown is" << o->dropDown();
+    editor->setDropDown(o->dropDown());
+    return editor;
 }
 
 void OptionsSelectDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
 {
-    auto w = qobject_cast<OptionEditWidget*>(editor);
-    auto o = index.data(DataRole).value<Option*>();
-
-    w->setOption(o);
-
-//    Option::Type type = static_cast<Option::Type>(index.data(TypeRole).toInt());
-//    QVariant dropDown = index.data(DropDownRole);
+    auto w = dynamic_cast<AbstractOptionEditor*>(editor);
     QVariant data = index.data(Qt::EditRole);
-
-//    w->setType(type);
-//    w->setDropDown(dropDown);
     w->setValue(data);
 }
 
 void OptionsSelectDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
 {
-    auto w = qobject_cast<OptionEditWidget*>(editor);
+    auto w = dynamic_cast<AbstractOptionEditor*>(editor);
     QVariant data = w->value();
     model->setData(index, w->value(), Qt::EditRole);
-    w->option()->setValue(w->value());
-    model->setData(index, w->option()->displayText(), Qt::DisplayRole);
-//    if (data.type() == QVariant::List) {
-//        auto list = data.toList();
-//        QString text;
-//        foreach (QVariant v, list) {
-//            if (!text.isEmpty())
-//                text.append(", ");
-//            text.append(v.toString());
-//        }
-//        model->setData(index, text, Qt::DisplayRole);
-//    } else {
-//        model->setData(index, data, Qt::DisplayRole);
-//    }
+    model->setData(index, w->text(), Qt::DisplayRole);
 }

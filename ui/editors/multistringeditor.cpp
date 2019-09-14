@@ -2,22 +2,24 @@
 
 #include <QPlainTextEdit>
 
-MultiStringEditor::MultiStringEditor() : CustomComboBox()
+MultiStringEditor::MultiStringEditor(QWidget *parent) : AbstractOptionEditor(parent), editor(nullptr)
 {
-    editor = new QPlainTextEdit(this);
+    comboBox = new CustomComboBox(this);
+    editor = new QPlainTextEdit;
     editor->hide();
+    comboBox->setPopup(editor);
     connect(editor, &QPlainTextEdit::textChanged,
             this, &MultiStringEditor::editor_textChanged);
 }
 
 void MultiStringEditor::editor_textChanged()
 {
-    setText(editor->toPlainText().replace("\n", ", "));
+    comboBox->setText(editor->toPlainText().replace("\n", ", "));
 }
 
-QWidget *MultiStringEditor::createEditor()
+QWidget *MultiStringEditor::createWidget()
 {
-    return editor;
+    return comboBox;
 }
 
 QVariant MultiStringEditor::value() const
@@ -41,5 +43,7 @@ void MultiStringEditor::setValue(const QVariant &value)
                 text.append(v.toString());
             }
         editor->setPlainText(text);
+    } else {
+        editor->clear();
     }
 }

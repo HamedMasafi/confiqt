@@ -1,24 +1,25 @@
-#ifndef OPTIONBOOLEDITOR_H
-#define OPTIONBOOLEDITOR_H
+#ifndef VOIDEDITOR_H
+#define VOIDEDITOR_H
 
 #include "abstractoptioneditor.h"
-#include <QCheckBox>
 
 class QCheckBox;
-class OptionBoolEditor : public AbstractOptionEditor
+class VoidEditor : public AbstractOptionEditor
 {
     Q_OBJECT
     QCheckBox *editor;
 
 public:
-    OptionBoolEditor(QWidget *parent = nullptr);
+    VoidEditor(QWidget *parent = nullptr);
+
+public:
     QVariant value() const override;
     void setValue(const QVariant &value) override;
     QWidget *createWidget() override;
     QString text() const override;
 
 private slots:
-    void me_stateChanged(int);
+    void me_toggled(bool);
 };
 
-#endif // OPTIONBOOLEDITOR_H
+#endif // VOIDEDITOR_H

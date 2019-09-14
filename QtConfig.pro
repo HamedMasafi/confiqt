@@ -43,11 +43,14 @@ SOURCES += \
         pages/pageoptions.cpp \
         ui/customcombobox.cpp \
         ui/editors/abstractoptioneditor.cpp \
+        ui/editors/comboselector.cpp \
         ui/editors/multistringeditor.cpp \
         ui/editors/multistringselector.cpp \
+        ui/editors/optionalstringeditor.cpp \
         ui/editors/optionbooleditor.cpp \
+        ui/editors/pathselecteditor.cpp \
         ui/editors/stringeditor.cpp \
-        ui/optioneditwidget.cpp \
+        ui/editors/voideditor.cpp \
         ui/optionsselectdelegate.cpp \
         pages/pagecrosscompile.cpp \
         pages/pagefeatures.cpp \
@@ -60,7 +63,6 @@ SOURCES += \
         pages/pageselectpaths.cpp \
         pages/pageselectplatform.cpp \
         pages/pagewelcome.cpp \
-        ui/plaintextcombobox.cpp \
         ui/qtconfigwizard.cpp \
         ui/qtlitedialog.cpp \
         ui/saveconfirmdialog.cpp \
@@ -82,11 +84,14 @@ HEADERS += \
         pages/pageoptions.h \
         ui/customcombobox.h \
         ui/editors/abstractoptioneditor.h \
+        ui/editors/comboselector.h \
         ui/editors/multistringeditor.h \
         ui/editors/multistringselector.h \
+        ui/editors/optionalstringeditor.h \
         ui/editors/optionbooleditor.h \
+        ui/editors/pathselecteditor.h \
         ui/editors/stringeditor.h \
-        ui/optioneditwidget.h \
+        ui/editors/voideditor.h \
         ui/optionsselectdelegate.h \
         pages/pagecrosscompile.h \
         pages/pagefeatures.h \
@@ -99,7 +104,6 @@ HEADERS += \
         pages/pageselectpaths.h \
         pages/pageselectplatform.h \
         pages/pagewelcome.h \
-        ui/plaintextcombobox.h \
         ui/qtconfigwizard.h \
         ui/qtlitedialog.h \
         ui/saveconfirmdialog.h \
@@ -108,7 +112,6 @@ HEADERS += \
 FORMS += \
         pages/pagecommon.ui \
         pages/pageoptions.ui \
-        ui/optioneditwidget.ui \
         pages/pagecrosscompile.ui \
         pages/pagefeatures.ui \
         pages/pagefinish.ui \

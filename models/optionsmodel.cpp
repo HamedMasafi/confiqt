@@ -91,7 +91,8 @@ QVariant OptionsModel::data(const QModelIndex &index, int role) const
 
 void OptionsModel::config_configuresUpdated()
 {
-    beginRemoveRows(QModelIndex(), 0, 0);
+    //TOOD: store previous count
+    beginRemoveRows(QModelIndex(), 0, 0 /* prev count */);
     endRemoveRows();
 
     beginInsertRows(QModelIndex(), 0, _config->options().count() - 1);

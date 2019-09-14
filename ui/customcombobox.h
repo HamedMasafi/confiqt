@@ -7,18 +7,17 @@
 class CustomComboBox : public QPushButton
 {
     Q_OBJECT
-    QWidget *editor;
+    QWidget *_editor;
 
 public:
     CustomComboBox(QWidget *parent = nullptr);
-
+    void setPopup(QWidget *popup);
 public slots:
     void me_click();
 
 protected:
     void paintEvent(QPaintEvent *event);
-    virtual QWidget *createEditor() = 0;
-    // QObject interface
+
 public:
     bool eventFilter(QObject *watched, QEvent *event);
     QVariant value() const;

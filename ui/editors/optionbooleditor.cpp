@@ -1,33 +1,55 @@
 #include "optionbooleditor.h"
 
-OptionBoolEditor::OptionBoolEditor() : QCheckBox()
+OptionBoolEditor::OptionBoolEditor(QWidget *parent) : AbstractOptionEditor(parent)
 {
-    setTristate(true);
-    connect(this, &QCheckBox::stateChanged,
+    editor = new QCheckBox(this);
+    editor->setTristate(true);
+    connect(editor, &QCheckBox::stateChanged,
             this, &OptionBoolEditor::me_stateChanged);
 }
 
 QVariant OptionBoolEditor::value() const
 {
-    return checkState();
+    return editor->checkState();
 }
 
 void OptionBoolEditor::setValue(const QVariant &value)
 {
-    setCheckState(value.value<Qt::CheckState>());
+    if (value == QVariant())
+        editor->setCheckState(Qt::PartiallyChecked);
+    else
+        editor->setCheckState(value.value<Qt::CheckState>());
+    me_stateChanged(editor->checkState());
 }
 
 void OptionBoolEditor::me_stateChanged(int state)
 {
     switch (state) {
     case Qt::Checked:
-        setText("true");
+        editor->setText("true");
         break;
     case Qt::Unchecked:
-        setText("false");
+        editor->setText("false");
         break;
     case Qt::PartiallyChecked:
-        setText("<not set>");
+        editor->setText("<not set>");
         break;
+    }
+}
+
+QWidget *OptionBoolEditor::createWidget()
+{
+    return editor;
+}
+
+QString OptionBoolEditor::text() const
+{
+    switch (editor->checkState()) {
+    case Qt::Checked:
+        return "true";
+    case Qt::Unchecked:
+        return "false";
+    case Qt::PartiallyChecked:
+        return QString();
     }
 }

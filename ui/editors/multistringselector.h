@@ -2,26 +2,23 @@
 #define MULTISTRINGSELECTOR_H
 
 #include "abstractoptioneditor.h"
-#include "customcombobox.h"
 
 class QListWidgetItem;
 class QListWidget;
-class MultiStringSelector : public CustomComboBox, public AbstractOptionEditor
+class CustomComboBox;
+class MultiStringSelector : public AbstractOptionEditor
 {
     Q_OBJECT
     QListWidget *editor;
+    CustomComboBox *comboBox;
 
 public:
-    MultiStringSelector();
+    MultiStringSelector(QWidget *parent = nullptr);
+    QVariant value() const override;
+    void setValue(const QVariant &value) override;
+    void setDropDown(const QStringList &list) override;
+    QWidget *createWidget() override;
 
-    // AbstractOptionEditor interface
-public:
-    QVariant value() const;
-    void setValue(const QVariant &value);
-    void setDropDown(const QStringList &list);
-
-protected:
-    QWidget *createEditor();
 private slots:
     void editor_itemChanged(QListWidgetItem *item);
 };

@@ -131,9 +131,9 @@ Option *Option::fromType(const QString &type)
     return o;
 }
 
-QVariant Option::dropDown() const
+QStringList Option::dropDown() const
 {
-    return QVariant();
+    return QStringList();
 }
 
 OptionBool::OptionBool() : Option(Option::Bool)
@@ -176,16 +176,17 @@ OptionEnum::~OptionEnum()
 
 }
 
-QVariant OptionEnum::dropDown() const
+QStringList OptionEnum::dropDown() const
 {
-    QVariantList list;
+    QStringList list;
     if (_values.type() == QVariant::Map) {
         auto keys = _values.toMap().keys();
         foreach(QString k, keys)
             list.append(k);
     }
     if (_values.type() == QVariant::List) {
-        list = _values.toList();
+        foreach (QVariant v, _values.toList())
+            list.append(v.toString());
     }
     return list;
 }
@@ -200,7 +201,7 @@ QStringList OptionEnum::applyValue(const QVariant &val) const
 
 bool OptionEnum::readCommandLine(const QString &arg, QVariant &var, QByteArrayList &opts)
 {
-    Q_UNUSED(opts);
+    Q_UNUSED(opts)
     if (arg == "")
         var = "yes";
     else
@@ -223,7 +224,7 @@ QStringList OptionString::applyValue(const QVariant &val) const
 
 bool OptionString::readCommandLine(const QString &arg, QVariant &var, QByteArrayList &opts)
 {
-    Q_UNUSED(arg);
+    Q_UNUSED(arg)
     var = opts.takeFirst();
     return true;
 }
@@ -247,7 +248,7 @@ QStringList OptionOptionalString::applyValue(const QVariant &val) const
 
 bool OptionOptionalString::readCommandLine(const QString &arg, QVariant &var, QByteArrayList &opts)
 {
-    Q_UNUSED(arg);
+    Q_UNUSED(arg)
     var = opts.takeFirst();
     return true;
 }
@@ -260,16 +261,17 @@ OptionAddString::~OptionAddString()
 
 }
 
-QVariant OptionAddString::dropDown() const
+QStringList OptionAddString::dropDown() const
 {
-    QVariantList list;
+    QStringList list;
     if (_values.type() == QVariant::Map) {
         auto keys = _values.toMap().keys();
         foreach(QString k, keys)
             list.append(k);
     }
     if (_values.type() == QVariant::List) {
-        list = _values.toList();
+        foreach(QVariant v,_values.toList())
+            list.append(v.toString());
     }
     return list;
 }
@@ -287,7 +289,7 @@ QStringList OptionAddString::applyValue(const QVariant &val) const
 
 bool OptionAddString::readCommandLine(const QString &arg, QVariant &var, QByteArrayList &opts)
 {
-    Q_UNUSED(arg);
+    Q_UNUSED(arg)
     auto tmp = opts.takeFirst();
     if (tmp.startsWith("-")) {
         opts.prepend(tmp);
@@ -330,8 +332,8 @@ QStringList OptionVoid::applyValue(const QVariant &val) const
 
 bool OptionVoid::readCommandLine(const QString &arg, QVariant &var, QByteArrayList &opts)
 {
-    Q_UNUSED(arg);
-    Q_UNUSED(opts);
+    Q_UNUSED(arg)
+    Q_UNUSED(opts)
     var = true;
     return true;
 }
