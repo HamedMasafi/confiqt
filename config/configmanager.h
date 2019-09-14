@@ -94,41 +94,24 @@ public:
     //models
     OptionsModel *optionsModel() const;
     FeaturesModel *featuresModel() const;
+
 public slots:
     void setSourcePath(QString sourcePath);
     void setBuildPath(QString buildPath);
     void setInstallPath(QString installPath);
-
     void setConfirmLicense(bool confirmLicense);
 
 signals:
     void sourcePathChanged(QString sourcePath);
     void buildPathChanged(QString buildPath);
 
-    void readComplate();
+//    void readComplate();
     void modulesUpdated();
     void platformsUpdated();
-    void configuresUpdated();
     void licensesUpdated();
+    void configuresUpdated();
 
 private:
-
-//    QStringList _submodules;
-//    QStringList _selectedModules;
-//    QStringList _platforms;
-//    QStringList _devices;
-//    QList<Option*> _options;
-//    QList<Feature*> _features;
-//    QStringList _licenses;
-//    QSet<QString> _configs;
-
-//    QMap<QString, Qt::CheckState> _featuresStates;
-//    QMap<QString, QVariant> _optionsStates;
-
-//    QString m_sourcePath;
-//    QString m_buildPath;
-//    LicenceType _licenseType;
-
     void clear();
     QStringList platformsInDir(const QString &path);
     QByteArray readFile(const QString &path);

@@ -31,6 +31,8 @@ public:
     QMap<QString, Qt::CheckState> featuresStates;
     QMap<QString, QVariant> optionsStates;
 
+    QMap<QString, QVariant> optionsValueStrings;
+
     QString sourcePath;
     QString buildPath;
     LicenceType licenseType;

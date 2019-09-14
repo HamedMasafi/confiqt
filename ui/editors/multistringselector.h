@@ -18,6 +18,7 @@ public:
     void setValue(const QVariant &value) override;
     void setDropDown(const QStringList &list) override;
     QWidget *createWidget() override;
+    QString text() const override;
 
 private slots:
     void editor_itemChanged(QListWidgetItem *item);

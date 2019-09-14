@@ -146,10 +146,11 @@ OptionBool::~OptionBool()
 
 QStringList OptionBool::applyValue(const QVariant &val) const
 {
-    if (val.type() == QVariant::Bool) {
-        if (val.toBool())
+    if (val.type() == QVariant::Int) {
+        auto ch = val.value<Qt::CheckState>();
+        if (ch == Qt::Checked)
             return QStringList() << "-" + _name;
-        else
+        else if (ch == Qt::Unchecked)
             return QStringList() << "-no-" + _name;
     }
     return QStringList();
@@ -157,7 +158,7 @@ QStringList OptionBool::applyValue(const QVariant &val) const
 
 bool OptionBool::readCommandLine(const QString &arg, QVariant &var, QByteArrayList &opts)
 {
-    Q_UNUSED(opts);
+    Q_UNUSED(opts)
     if (arg == "no") {
         var = false;
         return true;
@@ -240,7 +241,7 @@ OptionOptionalString::~OptionOptionalString()
 QStringList OptionOptionalString::applyValue(const QVariant &val) const
 {
     QStringList ret;
-    ret << "-name";
+    ret << "-" + name();
     if (!val.toString().isEmpty())
         ret << val.toString();
     return ret;

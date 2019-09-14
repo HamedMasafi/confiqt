@@ -12,6 +12,7 @@ class OptionsModel : public QAbstractTableModel
     Q_OBJECT
     ConfigManager *_config;
     QExplicitlySharedDataPointer<ConfigData> d;
+    int _prevCount;
 
 public:
     OptionsModel(ConfigManager *parent);

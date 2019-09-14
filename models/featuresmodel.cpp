@@ -159,8 +159,6 @@ void FeaturesModel::setState(const QString &name, const Qt::CheckState &state)
     if (node) {
         auto s1 = data(index(node, 0), Qt::DisplayRole).toString();
         auto s2 = node->title;
-//        if (s1 != s2)
-            qDebug() << s1 << " != " << s2;
 
         d->featuresStates.insert(node->feature->name, state);
         emit dataChanged(index(node, 0), index(node, 1));

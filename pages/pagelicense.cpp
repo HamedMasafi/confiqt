@@ -7,6 +7,10 @@ PageLicense::PageLicense(ConfigManager *config, QWidget *parent) :
 {
     setupUi(this);
     connect(_config, &ConfigManager::licensesUpdated, this, &PageLicense::licensesUpdated);
+
+#ifdef QT_DEBUG
+    checkBoxConfirmLicense->setChecked(true);
+#endif
 }
 
 void PageLicense::licensesUpdated() {

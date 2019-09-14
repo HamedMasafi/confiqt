@@ -15,6 +15,7 @@ PageWelcome::PageWelcome(ConfigManager *config, QWidget *parent)
     setupUi(this);
     registerField("simpleMode", radioButtonSimpleMode);
 
+#ifdef QT_DEBUG
     {
         auto w = new MultiStringEditor;
         w->setValue(QVariantList() << "One" << "Two" << "Three");
@@ -57,4 +58,5 @@ PageWelcome::PageWelcome(ConfigManager *config, QWidget *parent)
         w->setValue(true);
         layout()->addWidget(w);
     }
+#endif
 }

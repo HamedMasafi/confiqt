@@ -32,6 +32,11 @@ QWidget *MultiStringSelector::createWidget()
     return comboBox;
 }
 
+QString MultiStringSelector::text() const
+{
+    return comboBox->text();
+}
+
 QVariant MultiStringSelector::value() const
 {
     QVariantList list;

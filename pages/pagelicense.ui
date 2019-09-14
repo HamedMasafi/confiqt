@@ -76,9 +76,6 @@
      <property name="text">
       <string>Accept license</string>
      </property>
-     <property name="checked">
-      <bool>true</bool>
-     </property>
     </widget>
    </item>
   </layout>

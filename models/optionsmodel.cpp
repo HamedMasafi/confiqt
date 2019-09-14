@@ -4,7 +4,7 @@
 #include <configmanager.h>
 
 OptionsModel::OptionsModel(ConfigManager *parent) : QAbstractTableModel(parent)
-  ,_config(parent), d(parent->d)
+  ,_config(parent), d(parent->d), _prevCount(0)
 {
     connect(_config, &ConfigManager::configuresUpdated, this, &OptionsModel::config_configuresUpdated);
 }
@@ -65,7 +65,7 @@ QVariant OptionsModel::data(const QModelIndex &index, int role) const
         case 1:
             return opt->typeString();
         case 2:
-            return d->optionsStates.value(opt->name());
+            return d->optionsValueStrings.value(opt->name());
         default:
             Q_UNREACHABLE();
         }
@@ -92,10 +92,11 @@ QVariant OptionsModel::data(const QModelIndex &index, int role) const
 void OptionsModel::config_configuresUpdated()
 {
     //TOOD: store previous count
-    beginRemoveRows(QModelIndex(), 0, 0 /* prev count */);
+    beginRemoveRows(QModelIndex(), 0, _prevCount - 1);
     endRemoveRows();
 
-    beginInsertRows(QModelIndex(), 0, _config->options().count() - 1);
+    _prevCount = _config->options().count();
+    beginInsertRows(QModelIndex(), 0, _prevCount - 1);
     endInsertRows();
 }
 
@@ -128,11 +129,16 @@ Qt::ItemFlags OptionsModel::flags(const QModelIndex &index) const
 
 bool OptionsModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-    if (index.column() == 2 && role == Qt::DisplayRole) {
+    if (index.column() == 2) {
         auto o = option(index);
         if (!o)
             return false;
-        d->optionsStates.insert(o->name(), value);
+        if (role == Qt::DisplayRole)
+            d->optionsValueStrings.insert(o->name(), value);
+
+        if (role == Qt::EditRole)
+            d->optionsStates.insert(o->name(), value);
+
         return true;
     }
     return QAbstractTableModel::setData(index, value, role);

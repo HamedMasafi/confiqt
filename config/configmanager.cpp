@@ -366,7 +366,7 @@ void ConfigManager::importSettings()
             if (!ba.startsWith("-")) {
                 qDebug() << "error in line:" << ba;
             }
-            ba = ba.remove(0, 1);
+            ba = ba.remove(0, 1); // remove dash from beggining
 
             if (ba.startsWith("no-feature-")) {
                 setFeatureState(ba.remove(0, 11), Qt::Unchecked);

@@ -23,9 +23,11 @@ QWidget *OptionsSelectDelegate::createEditor(QWidget *parent, const QStyleOption
     Q_UNUSED(option)
     auto o = index.data(DataRole).value<Option*>();
     AbstractOptionEditor *editor = nullptr;
+    auto dropDown = o->dropDown();
 
     switch (o->type()) {
     case Option::Unknown:
+        Q_UNREACHABLE();
         break;
     case Option::Bool:
         editor = new OptionBoolEditor(parent);
@@ -43,7 +45,7 @@ QWidget *OptionsSelectDelegate::createEditor(QWidget *parent, const QStyleOption
         editor = new OptionalStringEditor(parent);
         break;
     case Option::AddString:
-        if (o->dropDown() == QVariant())
+        if (dropDown == QVariant())
             editor = new MultiStringEditor(parent);
         else
             editor = new MultiStringSelector(parent);
@@ -53,9 +55,7 @@ QWidget *OptionsSelectDelegate::createEditor(QWidget *parent, const QStyleOption
         break;
     }
 
-    if (o->dropDown() != QStringList())
-        qDebug() << "Dropdown is" << o->dropDown();
-    editor->setDropDown(o->dropDown());
+    editor->setDropDown(dropDown);
     return editor;
 }
 

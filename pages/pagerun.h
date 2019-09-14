@@ -8,7 +8,6 @@ class PageRun : public WizardPageBase, private Ui::PageRun
 {
     Q_OBJECT
 
-    void run();
 public:
     explicit PageRun(ConfigManager *config, QWidget *parent = nullptr);
 
@@ -19,6 +18,11 @@ public:
     // QWizardPage interface
 public:
     bool isComplete() const;
+private slots:
+    void initProcess(QProcess *p);
+    void configure();
+    void make();
+    void detectFeatures();
 };
 
 #endif // PAGERUN_H
