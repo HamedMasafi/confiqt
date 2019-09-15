@@ -29,7 +29,7 @@
      <item>
       <widget class="QLineEdit" name="lineEditSourcePath">
        <property name="text">
-        <string>/opt/src/Qt/persian-calendaring/qt5/</string>
+        <string/>
        </property>
       </widget>
      </item>
@@ -60,7 +60,7 @@
      <item>
       <widget class="QLineEdit" name="lineEditBuildPath">
        <property name="text">
-        <string>/opt/src/Qt/persian-calendaring/tb/</string>
+        <string/>
        </property>
       </widget>
      </item>
@@ -91,7 +91,7 @@
      <item>
       <widget class="QLineEdit" name="lineEditInstallPath">
        <property name="text">
-        <string>/opt/src/Qt/persian-calendaring/kit/</string>
+        <string/>
        </property>
       </widget>
      </item>

@@ -1,0 +1,3 @@
+[submodule "3rdparty/webrequest"]
+	path = 3rdparty/webrequest
+	url = https://github.com/HamedMasafi/WebRequest.git

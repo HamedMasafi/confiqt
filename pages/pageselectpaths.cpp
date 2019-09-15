@@ -4,12 +4,18 @@
 #include <QDir>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QSettings>
 
 PageSelectPaths::PageSelectPaths(ConfigManager *config, QWidget *parent)
     : WizardPageBase(config, parent)
 {
     setupUi(this);
     labelDefaultMkspec->setText(_config->defaultPlatform());
+
+    QSettings set;
+    lineEditSourcePath->setText(set.value("sourcePath", "").toString());
+    lineEditBuildPath->setText(set.value("buildPath", "").toString());
+    lineEditInstallPath->setText(set.value("installPath", "").toString());
 }
 
 bool PageSelectPaths::validatePage()
@@ -46,6 +52,11 @@ bool PageSelectPaths::validatePage()
     _config->setSourcePath(lineEditSourcePath->text());
     _config->setBuildPath(lineEditBuildPath->text());
     _config->setInstallPath(lineEditInstallPath->text());
+
+    QSettings set;
+    set.setValue("sourcePath", lineEditSourcePath->text());
+    set.setValue("buildPath", lineEditBuildPath->text());
+    set.setValue("installPath", lineEditInstallPath->text());
 
     if (QFile::exists(lineEditBuildPath->text() + "/config.opt")) {
         QMessageBox msg;

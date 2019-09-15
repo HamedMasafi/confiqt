@@ -50,6 +50,8 @@ void PageRun::configure()
 }
 
 void PageRun::detectFeatures() {
+    treeWidgetDetectedFeatures->clear();
+
     auto lines = plainTextEditBuildOutput->toPlainText().split("\n");
     bool found = false;
     QRegularExpression rSection("^(\\s*)([^:]+):$");

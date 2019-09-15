@@ -7,7 +7,10 @@
 #include <QMessageBox>
 #include <QStandardItemModel>
 #include <featuresmodel.h>
+
+#ifdef WEB_REQUEST_LIB
 #include <qtlitedialog.h>
+#endif
 
 PageFeatures::PageFeatures(ConfigManager *config, QWidget *parent)
     : WizardPageBase(config, parent)
@@ -173,6 +176,7 @@ void PageFeatures::on_labelCondition_linkActivated(const QString &link)
 
 void PageFeatures::on_pushButtonQtLite_clicked()
 {
+#ifdef WEB_REQUEST_LIB
     QtLiteDialog d(this);
     if (d.exec() == QDialog::Accepted) {
         auto fs = d.features();
@@ -180,4 +184,5 @@ void PageFeatures::on_pushButtonQtLite_clicked()
             _config->setFeatureState(f, Qt::Unchecked);
         config_configuresUpdated();
     }
+#endif
 }
