@@ -4,18 +4,23 @@ PageModules::PageModules(ConfigManager *config, QWidget *parent)
     : WizardPageBase (config, parent)
 {
     setupUi(this);
-    connect(_config, &ConfigManager::modulesUpdated, this, &PageModules::config_modulesUpdated);
+    connect(_config, &ConfigManager::configuresUpdated, this, &PageModules::config_configuresUpdated);
 }
 
-void PageModules::config_modulesUpdated()
+void PageModules::config_configuresUpdated()
 {
-    QStringList modules = _config->submodules();
+    auto modules = _config->submodules();
+    auto selectedModules = _config->selectedModules();
+
     listWidgetModules->clear();
     foreach (QString module, modules) {
         QListWidgetItem *item = new QListWidgetItem(listWidgetModules);
         item->setText(module);
         item->setFlags(item->flags() | Qt::ItemIsEditable);
-        item->setCheckState(Qt::Checked);
+        if (selectedModules.count())
+            item->setCheckState(selectedModules.contains(module) ? Qt::Checked : Qt::Unchecked);
+        else
+            item->setCheckState(Qt::Checked);
         listWidgetModules->addItem(item);
     }
 }

@@ -34,10 +34,7 @@ bool PageCommon::validatePage()
 {
     auto i = map.begin();
     while (i != map.end()) {
-        if (i.key()->isChecked())
-            _config->setFeatureState(i.value(), Qt::Checked);
-        else
-            _config->setFeatureState(i.value(), Qt::PartiallyChecked);
+        _config->setFeatureState(i.value(), i.key()->isChecked() ? Qt::Checked : Qt::Unchecked);
         ++i;
     }
 

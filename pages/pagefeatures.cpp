@@ -121,7 +121,7 @@ void PageFeatures::checkItem(QStandardItem *item) {
 }
 bool PageFeatures::validatePage()
 {
-    _config->clearFeatureStates();
+//    _config->clearFeatureStates();
 //    for (int i = 0; i < featuresModel->rowCount(); ++i) {
 //        auto moduleItem = featuresModel->item(i, 0);
 //        checkItem(moduleItem);

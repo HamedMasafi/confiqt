@@ -7,6 +7,7 @@
 #include <QDebug>
 #include <QDir>
 #include <QFile>
+#include <QJsonArray>
 #include <QJsonDocument>
 #include <QProcess>
 #include <QRegularExpression>
@@ -118,26 +119,11 @@ void ConfigManager::setFeatureState(const QString &featureName, const Qt::CheckS
 
 QVariant ConfigManager::optionState(const QString &name) const
 {
-    if (d->optionsStates.value(name).isValid())
-    qDebug() << "state for" << name <<"is"<<d->optionsStates.value(name);
     return d->optionsStates.value(name);
 }
 
 void ConfigManager::setOptionsState(const Option *option, const QVariant &state)
 {
-//    if (!option) {
-//        qDebug() << "The option" << option->name() << "not found!";
-//        return;
-//    }
-//    qDebug() << "setting" << option->name() << ":"<<state << "(" << option->typeString() << ")";
-
-//    if (option->type() == Option::AddString) {
-//        auto list = d->optionsStates.value(option->name()).toList();
-//        list.append(state);
-//        d->optionsStates.insert(option->name(), list);
-//    } else {
-//        d->optionsStates.insert(option->name(), state);
-//    }
     d->optionsModel->setState(option->name(), state);
 }
 
@@ -272,6 +258,51 @@ bool ConfigManager::isSaveNeeded() const
     return false;
 }
 
+bool ConfigManager::importJson(QString &path)
+{
+    QFile f(path);
+    if (!f.open(QIODevice::ReadOnly | QIODevice::Text))
+        return false;
+    QJsonDocument doc = QJsonDocument::fromJson(f.readAll());
+
+    auto o = doc.object();
+    if (o.isEmpty())
+        return false;
+
+    setSourcePath(o.value("sourcePath").toString());
+    setBuildPath(o.value("buildPath").toString());
+    auto a = o.value("params").toArray();
+    QStringList params;
+    foreach (QJsonValue v, a)
+        params << v.toString();
+
+    importParams(params);
+    return true;
+}
+
+bool ConfigManager::exportJson(QString &path, const SaveParametereType &params) const
+{
+    QJsonObject out;
+    out.insert("sourcePath", d->sourcePath);
+    out.insert("buildPath", d->buildPath);
+    QJsonArray commandsArray;
+    auto commands = createCommand(params);
+    foreach (QString command, commands)
+        commandsArray.append(command);
+    out.insert("params", commandsArray);
+
+    QFile statusFile(path);
+    if (!statusFile.open(QIODevice::Text | QIODevice::WriteOnly))
+        return false;
+
+    QJsonDocument doc;
+    doc.setObject(out);
+    statusFile.write(doc.toJson(QJsonDocument::Indented));
+    statusFile.close();
+
+    return true;
+}
+
 bool ConfigManager::hasConfig(const QString &name) const
 {
     return d->configs.contains(name);
@@ -347,59 +378,64 @@ void ConfigManager::readConfig(const QString &path, const QString &moduleName)
     d->features.append(c.features());
 }
 
-void ConfigManager::importSettings()
+void ConfigManager::importPreviousBuild()
 {
     // Read configurations
     QFile optFile(d->buildPath + "config.opt");
     if (optFile.open(QIODevice::Text | QIODevice::ReadOnly)) {
 
-        QByteArrayList opts = optFile.readAll().split('\n');
+        auto opts = QString(optFile.readAll()).split('\n');
         optFile.close();
 
-        d->selectedModules = d->submodules;
+        importParams(opts);
+    }
+}
 
-        while (opts.count()) {
-            auto ba = opts.takeFirst();
-            if (ba.isEmpty())
-                continue;
+void ConfigManager::importParams(const QStringList &params)
+{
+    auto opts = params;
+    d->selectedModules = d->submodules;
 
-            if (!ba.startsWith("-")) {
-                qDebug() << "error in line:" << ba;
-            }
-            ba = ba.remove(0, 1); // remove dash from beggining
+    while (opts.count()) {
+        auto ba = opts.takeFirst();
+        if (ba.isEmpty())
+            continue;
 
-            if (ba.startsWith("no-feature-")) {
-                setFeatureState(ba.remove(0, 11), Qt::Unchecked);
-                continue;
-            }
-            if (ba.startsWith("feature-")) {
-                setFeatureState(ba.remove(0, 8), Qt::Checked);
-                continue;
-            }
 
-            if (ba == "skip") {
-                d->selectedModules.removeOne(opts.takeFirst());
-                continue;
-            }
+        if (!ba.startsWith("-")) {
+            qDebug() << "error in line:" << ba;
+        }
+        ba = ba.remove(0, 1); // remove dash from beggining
 
-            Option *o = nullptr;
 
-            QString val;
-            if (!o)
-                o = optionByOpt(ba, val);
-
-            if (o){
-                QVariant var;
-                o->readCommandLine(val, var, opts);
-                if (var.isValid())
-                    setOptionsState(o, var);
-            } else {
-                qWarning() << "Unknown parametere:" << ba;
-            }
+        if (ba.startsWith("no-feature-")) {
+            setFeatureState(ba.remove(0, 11), Qt::Unchecked);
+            continue;
+        }
+        if (ba.startsWith("feature-")) {
+            setFeatureState(ba.remove(0, 8), Qt::Checked);
+            continue;
         }
 
-        emit configuresUpdated();
+        if (ba == "skip") {
+            d->selectedModules.removeOne(opts.takeFirst());
+            continue;
+        }
+
+        QString val;
+        Option *o = optionByOpt(ba, val);
+
+        if (o){
+            QVariant var;
+            o->readCommandLine(val, var, opts);
+            if (var.isValid())
+                setOptionsState(o, var);
+        } else {
+            qWarning() << "Unknown parametere:" << ba;
+        }
     }
+
+    emit configuresUpdated();
 }
 
 void ConfigManager::deleteSettings()
@@ -432,6 +468,9 @@ Option *ConfigManager::optionByOpt(const QString &opt, QString &val)
         if (opt == o->name())
             return o;
         if (opt.endsWith(o->name())) {
+            auto ch = opt.mid(opt.length() - o->name().length() - 1, 1);
+            if (ch != "-")
+                continue;
             val = opt.mid(0, opt.length() - o->name().length() - 1 /* the One if for ending dash */ );
             return o;
         }

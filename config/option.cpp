@@ -156,7 +156,7 @@ QStringList OptionBool::applyValue(const QVariant &val) const
     return QStringList();
 }
 
-bool OptionBool::readCommandLine(const QString &arg, QVariant &var, QByteArrayList &opts)
+bool OptionBool::readCommandLine(const QString &arg, QVariant &var, QStringList &opts)
 {
     Q_UNUSED(opts)
     if (arg == "no") {
@@ -200,7 +200,7 @@ QStringList OptionEnum::applyValue(const QVariant &val) const
         return QStringList() << "-" + val.toString() + "-" + _name;
 }
 
-bool OptionEnum::readCommandLine(const QString &arg, QVariant &var, QByteArrayList &opts)
+bool OptionEnum::readCommandLine(const QString &arg, QVariant &var, QStringList &opts)
 {
     Q_UNUSED(opts)
     if (arg == "")
@@ -223,7 +223,7 @@ QStringList OptionString::applyValue(const QVariant &val) const
     return QStringList() << "-" + _name << val.toString();
 }
 
-bool OptionString::readCommandLine(const QString &arg, QVariant &var, QByteArrayList &opts)
+bool OptionString::readCommandLine(const QString &arg, QVariant &var, QStringList &opts)
 {
     Q_UNUSED(arg)
     var = opts.takeFirst();
@@ -247,7 +247,7 @@ QStringList OptionOptionalString::applyValue(const QVariant &val) const
     return ret;
 }
 
-bool OptionOptionalString::readCommandLine(const QString &arg, QVariant &var, QByteArrayList &opts)
+bool OptionOptionalString::readCommandLine(const QString &arg, QVariant &var, QStringList &opts)
 {
     Q_UNUSED(arg)
     var = opts.takeFirst();
@@ -288,7 +288,7 @@ QStringList OptionAddString::applyValue(const QVariant &val) const
     return ret;
 }
 
-bool OptionAddString::readCommandLine(const QString &arg, QVariant &var, QByteArrayList &opts)
+bool OptionAddString::readCommandLine(const QString &arg, QVariant &var, QStringList &opts)
 {
     Q_UNUSED(arg)
     auto tmp = opts.takeFirst();
@@ -331,7 +331,7 @@ QStringList OptionVoid::applyValue(const QVariant &val) const
     return QStringList();
 }
 
-bool OptionVoid::readCommandLine(const QString &arg, QVariant &var, QByteArrayList &opts)
+bool OptionVoid::readCommandLine(const QString &arg, QVariant &var, QStringList &opts)
 {
     Q_UNUSED(arg)
     Q_UNUSED(opts)

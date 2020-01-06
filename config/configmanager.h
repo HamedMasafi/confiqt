@@ -50,13 +50,13 @@ public:
     bool confirmLicense() const;
     QStringList submodules() const;
     QStringList platforms() const;
+    QStringList devices() const;
     QStringList licenses() const;
 
     QString defaultPlatform() const;
     QString defaultPlatform(QString &platform_notes) const;
     QVariantList nomake() const;
 
-    QStringList devices() const;
 
     // features
     void clearFeatureStates();
@@ -84,10 +84,14 @@ public:
     QStringList createCommand(const SaveParametereType &params = All) const;
     QProcess *createProcess() const;
     void readConfig();
-    void importSettings();
+    void importParams(const QStringList &params);
     void deleteSettings();
     bool save(const QString &path = QString(), const SaveParametereType &params = All);
     bool isSaveNeeded() const;
+
+    void importPreviousBuild();
+    bool importJson(QString &path);
+    bool exportJson(QString &path, const SaveParametereType &params = All) const;
 
     void process();
 

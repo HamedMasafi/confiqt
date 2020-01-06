@@ -12,7 +12,7 @@ public:
     explicit PageModules(ConfigManager *config, QWidget *parent = nullptr);
 
 private slots:
-    void config_modulesUpdated();
+    void config_configuresUpdated();
 
     // QWizardPage interface
 public:

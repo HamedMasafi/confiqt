@@ -22,6 +22,10 @@ public:
     bool eventFilter(QObject *watched, QEvent *event);
     QVariant value() const;
     void setValue(const QVariant &value);
+
+    // QWidget interface
+protected:
+    void mouseReleaseEvent(QMouseEvent *event);
 };
 
 #endif // CUSTOMCOMBOBOX_H

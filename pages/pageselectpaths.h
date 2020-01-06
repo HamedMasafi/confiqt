@@ -18,6 +18,7 @@ private slots:
     void on_pushButtonSelectSourcePath_clicked();
     void on_pushButtonSelectBuildPath_clicked();
     void on_pushButtonSelectInstallPath_clicked();
+    void on_pushButtonImport_clicked();
 };
 
 #endif // PAGESELECTPATHS_H

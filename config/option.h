@@ -26,7 +26,7 @@ public:
     static Option *fromType(const QString &type);
     virtual QStringList dropDown() const;
     virtual QStringList applyValue(const QVariant &val) const = 0;
-    virtual bool readCommandLine(const QString &arg, QVariant &var, QByteArrayList &opts) = 0;
+    virtual bool readCommandLine(const QString &arg, QVariant &var, QStringList &opts) = 0;
 
     QString name() const;
     void setName(const QString &name);
@@ -71,7 +71,7 @@ public:
     virtual ~OptionBool() override;
 
     QStringList applyValue(const QVariant &val) const override;
-    bool readCommandLine(const QString &arg, QVariant &var, QByteArrayList &opts) override;
+    bool readCommandLine(const QString &arg, QVariant &var, QStringList &opts) override;
 };
 
 class OptionEnum : public Option
@@ -82,7 +82,7 @@ public:
 
     QStringList dropDown() const override;
     QStringList applyValue(const QVariant &val) const override;
-    bool readCommandLine(const QString &arg, QVariant &var, QByteArrayList &opts) override;
+    bool readCommandLine(const QString &arg, QVariant &var, QStringList &opts) override;
 };
 
 class OptionString : public Option
@@ -92,7 +92,7 @@ public:
     virtual ~OptionString() override;
 
     QStringList applyValue(const QVariant &val) const override;
-    bool readCommandLine(const QString &arg, QVariant &var, QByteArrayList &opts) override;
+    bool readCommandLine(const QString &arg, QVariant &var, QStringList &opts) override;
 };
 
 class OptionOptionalString : public Option
@@ -102,7 +102,7 @@ public:
     virtual ~OptionOptionalString() override;
 
     QStringList applyValue(const QVariant &val) const override;
-    bool readCommandLine(const QString &arg, QVariant &var, QByteArrayList &opts) override;
+    bool readCommandLine(const QString &arg, QVariant &var, QStringList &opts) override;
 };
 
 class OptionAddString : public Option
@@ -113,7 +113,7 @@ public:
 
     QStringList dropDown() const override;
     QStringList applyValue(const QVariant &val) const override;
-    bool readCommandLine(const QString &arg, QVariant &var, QByteArrayList &opts) override;
+    bool readCommandLine(const QString &arg, QVariant &var, QStringList &opts) override;
     QString displayText() const override;
 };
 
@@ -124,7 +124,7 @@ public:
     virtual ~OptionVoid() override;
 
     QStringList applyValue(const QVariant &val) const override;
-    bool readCommandLine(const QString &arg, QVariant &var, QByteArrayList &opts) override;
+    bool readCommandLine(const QString &arg, QVariant &var, QStringList &opts) override;
 };
 
 #endif // OPTION_H

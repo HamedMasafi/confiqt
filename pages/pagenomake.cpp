@@ -23,8 +23,19 @@ void PageNoMake::config_configuresUpdated()
         foreach (QVariant v, list) {
             QListWidgetItem *item = new QListWidgetItem(v.toString(), listWidgetNoMake);
             item->setFlags(item->flags() | Qt::ItemIsEditable);
-            item->setCheckState(Qt::Unchecked);
+            item->setCheckState(list.contains(v) ? Qt::Checked : Qt::Unchecked);
             listWidgetNoMake->addItem(item);
         }
-     }
+    }
+}
+
+bool PageNoMake::validatePage()
+{
+    QVariantList nomake;
+    for (int i = 0; i < listWidgetNoMake->count(); ++i) {
+        if (listWidgetNoMake->item(i)->checkState() == Qt::Checked)
+            nomake << listWidgetNoMake->item(i)->text();
+    }
+    _config->setOptionsState("nomake", nomake);
+    return true;
 }

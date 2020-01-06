@@ -162,6 +162,8 @@ void FeaturesModel::setState(const QString &name, const Qt::CheckState &state)
 
         d->featuresStates.insert(node->feature->name, state);
         emit dataChanged(index(node, 0), index(node, 1));
+    } else {
+        qDebug() << "Feature" << name << "not found!";
     }
 }
 

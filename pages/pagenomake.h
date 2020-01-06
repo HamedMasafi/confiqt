@@ -12,6 +12,10 @@ public:
     explicit PageNoMake(ConfigManager *config, QWidget *parent = nullptr);
 private slots:
     void config_configuresUpdated();
+
+    // QWizardPage interface
+public:
+    bool validatePage();
 };
 
 #endif // PAGENOMAKE_H

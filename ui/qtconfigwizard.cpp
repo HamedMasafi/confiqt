@@ -62,6 +62,7 @@ int QtConfigWizard::nextId() const
 
 void QtConfigWizard::closeEvent(QCloseEvent *event)
 {
+    currentPage()->validatePage();
     if (_config->isSaveNeeded()) {
         SaveConfirmDialog d(_config, this);
         if (d.exec() == QDialog::Rejected)
@@ -71,6 +72,7 @@ void QtConfigWizard::closeEvent(QCloseEvent *event)
 
 void QtConfigWizard::on_QtConfigWizard_rejected()
 {
+    currentPage()->validatePage();
     if (_config->isSaveNeeded()) {
         SaveConfirmDialog d(_config, this);
         d.exec();

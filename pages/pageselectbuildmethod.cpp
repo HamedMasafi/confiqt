@@ -1,5 +1,5 @@
-#include "qtconfigwizard.h"
 #include "pageselectbuildmethod.h"
+#include "qtconfigwizard.h"
 
 PageSelectBuildMethod::PageSelectBuildMethod(ConfigManager *config, QWidget *parent)
     : WizardPageBase(config, parent)
@@ -12,7 +12,15 @@ void PageSelectBuildMethod::on_pushButtonShowParameteres_clicked()
 {
     QString cmd = _config->createCommand().join(" ");
 
+    plainTextEditParameteres->setVisible(!plainTextEditParameteres->isVisible());
     plainTextEditParameteres->setPlainText(cmd.replace(" -", "\n-"));
+    verticalSpacer->changeSize(20,
+                               1,
+                               QSizePolicy::Minimum,
+                               plainTextEditParameteres->isVisible() ? QSizePolicy::Ignored
+                                                                     : QSizePolicy::Expanding);
+
+    layout()->invalidate();
 }
 
 int PageSelectBuildMethod::nextId() const
@@ -34,7 +42,7 @@ bool PageSelectBuildMethod::validatePage()
     QFile statusFile(_config->buildPath() + "config.status");
     if (statusFile.open(QIODevice::Text | QIODevice::WriteOnly)) {
         QString redoCommand = QString("#!/bin/sh\nexec %1configure -redo \"$@\"")
-                .arg(_config->sourcePath());
+                                  .arg(_config->sourcePath());
         statusFile.write(redoCommand.toLatin1());
         statusFile.close();
     }

@@ -11,7 +11,7 @@ SaveConfirmDialog::SaveConfirmDialog(ConfigManager *config, QWidget *parent) :
 
 void SaveConfirmDialog::on_pushButtonSelectPath_clicked()
 {
-    QString path = QFileDialog::getSaveFileName(this, "Select file", _config->buildPath());
+    QString path = QFileDialog::getSaveFileName(this, tr("Select file"), _config->buildPath());
     if (path != QString())
         lineEditPath->setText(path);
 }
@@ -31,8 +31,19 @@ void SaveConfirmDialog::on_buttonBox_accepted()
     if (radioButtonEverything->isChecked())
         params = ConfigManager::All;
 
-    bool ok = _config->save(path, params);
+    bool ok;
+
+    if (radioButtonSaveCustomLocation)
+        ok = _config->exportJson(path, params);
+    else
+        ok = _config->save(path, params);
 
     if (ok)
+        accept();
+}
+
+void SaveConfirmDialog::on_buttonBox_clicked(QAbstractButton *button)
+{
+    if (buttonBox->buttonRole(button) == QDialogButtonBox::DestructiveRole)
         accept();
 }

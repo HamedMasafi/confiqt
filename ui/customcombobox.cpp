@@ -11,20 +11,21 @@
 CustomComboBox::CustomComboBox(QWidget *parent)
     : QPushButton(parent), _editor(nullptr)
 {
-
 }
 
 void CustomComboBox::setPopup(QWidget *popup)
 {
     _editor = popup;
-
-    _editor->installEventFilter(this);
-    _editor->setAttribute(Qt::WA_WindowPropagation);
-    _editor->setAttribute(Qt::WA_X11NetWmWindowTypeCombo);
-    _editor->setWindowFlag(Qt::Tool, true);
+    _editor->setWindowFlags(Qt::Popup);
+    _editor->setParent(this);
 
 //    _editor->installEventFilter(this);
-    connect(this, &QPushButton::clicked, this, &CustomComboBox::me_click);
+//    _editor->setAttribute(Qt::WA_WindowPropagation);
+//    _editor->setAttribute(Qt::WA_X11NetWmWindowTypeCombo);
+//    _editor->setWindowFlag(Qt::Tool, true);
+
+//    _editor->installEventFilter(this);
+//    connect(this, &QPushButton::clicked, this, &CustomComboBox::me_click);
 
     QShortcut *closeShortcut = new QShortcut(_editor);
     closeShortcut->setContext(Qt::WidgetWithChildrenShortcut);
@@ -100,5 +101,12 @@ bool CustomComboBox::eventFilter(QObject *watched, QEvent *event)
     }
 
     return QWidget::eventFilter(watched, event);
+}
+
+void CustomComboBox::mouseReleaseEvent(QMouseEvent *event)
+{
+    _editor->move(this->mapToGlobal(QPoint(0, this->height())));
+    _editor->setWindowFlags(Qt::Popup);
+    _editor->show();
 }
 

@@ -27,11 +27,12 @@ void OptionsModel::setState(const QString &name, const QVariant &value)
             auto idx = index(i, 2);
             setData(idx, value);
             emit dataChanged(idx, idx);
-            break;
+            return;
         }
         ++i;
         ++it;
     }
+    qDebug() << "Option" << name << "not found!";
 }
 
 Option *OptionsModel::option(const QModelIndex &index) const

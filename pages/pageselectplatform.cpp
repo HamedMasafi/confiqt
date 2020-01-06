@@ -15,3 +15,10 @@ void PageSelectPlatform::config_platformsUpdated()
     listWidgetPlatform->addItems(_config->platforms());
     labelDefaultMkspec->setText(_config->defaultPlatform());
 }
+
+bool PageSelectPlatform::validatePage()
+{
+    if (checkBoxSelectPLatform->isChecked())
+        _config->setOptionsState("platform", listWidgetPlatform->currentItem()->text());
+    return true;
+}

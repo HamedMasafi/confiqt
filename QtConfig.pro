@@ -135,3 +135,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 exists(3rdparty/webrequest/WebRequest.pri) {
     include(3rdparty/webrequest/WebRequest.pri)
 }
+
+RESOURCES += \
+    res/res.qrc

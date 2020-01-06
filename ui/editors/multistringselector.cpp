@@ -6,8 +6,8 @@
 MultiStringSelector::MultiStringSelector(QWidget *parent) : AbstractOptionEditor(parent), editor(nullptr)
 {
     comboBox = new CustomComboBox(this);
-    editor = new QListWidget;
-    editor->hide();
+    editor = new QListWidget(comboBox);
+//    editor->hide();
     comboBox->setPopup(editor);
     connect(editor, &QListWidget::itemChanged,
             this, &MultiStringSelector::editor_itemChanged);

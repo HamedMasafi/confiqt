@@ -12,9 +12,11 @@ public:
     explicit PageCrossCompile(ConfigManager *config, QWidget *parent = nullptr);
 
 private slots:
-    void config_platformsUpdated();
-    void on_comboBoxType_activated(int index);
+    void config_configuresUpdated();
+    void on_comboBoxType_currentIndexChanged(int index);
 
+public:
+    bool validatePage();
 };
 
 #endif // PAGECROSSCOMPILE_H

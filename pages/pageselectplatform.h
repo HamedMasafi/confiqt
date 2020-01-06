@@ -13,6 +13,10 @@ public:
 
 public slots:
     void config_platformsUpdated();
+
+    // QWizardPage interface
+public:
+    bool validatePage();
 };
 
 #endif // PAGESELECTPLATFORM_H

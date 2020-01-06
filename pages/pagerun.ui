@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>557</width>
-    <height>534</height>
+    <width>527</width>
+    <height>401</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -131,6 +131,9 @@
           <font>
            <family>Courier 10 Pitch</family>
           </font>
+         </property>
+         <property name="readOnly">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
