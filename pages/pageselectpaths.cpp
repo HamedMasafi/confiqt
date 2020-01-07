@@ -60,6 +60,7 @@ bool PageSelectPaths::validatePage()
     set.setValue("sourcePath", lineEditSourcePath->text());
     set.setValue("buildPath", lineEditBuildPath->text());
     set.setValue("installPath", lineEditInstallPath->text());
+    set.sync();
 
     if (QFile::exists(lineEditBuildPath->text() + "/config.opt")) {
         QMessageBox msg;
