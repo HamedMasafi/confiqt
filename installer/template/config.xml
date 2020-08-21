@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Installer>
+    <Name>Qt Config</Name>
+    <Version>0.1.2.15</Version>
+    <Title>Qt Config Installer</Title>
+    <Publisher>Tooska</Publisher>
+    <StartMenuDir>Qt Config</StartMenuDir>
+    <TargetDir>@ApplicationsDir@/QtConfig</TargetDir>
+</Installer>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package>
+    <DisplayName>Qt Config Tool</DisplayName>
+    <Description>A tool for config and build Qt framework.</Description>
+    <Version>0.1.0-1</Version>
+    <ReleaseDate>2020-05-09</ReleaseDate>
+    <Default>true</Default>
+	<StartMenuDir>Qt Config</StartMenuDir>
+    <TargetDir>@ApplicationsDir@/QtConfig/QtConfig.exe</TargetDir>
+</Package>
