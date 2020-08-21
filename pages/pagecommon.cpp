@@ -25,7 +25,7 @@ void PageCommon::config_configuresUpdated()
 {
     auto i = map.begin();
     while (i != map.end()) {
-        i.key()->setChecked(_config->featureState(i.value()) == Qt::Checked);
+        i.key()->setCheckState(_config->featureState(i.value()));
         ++i;
     }
 }
@@ -34,7 +34,7 @@ bool PageCommon::validatePage()
 {
     auto i = map.begin();
     while (i != map.end()) {
-        _config->setFeatureState(i.value(), i.key()->isChecked() ? Qt::Checked : Qt::Unchecked);
+        _config->setFeatureState(i.value(), i.key()->checkState());
         ++i;
     }
 

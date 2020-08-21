@@ -30,8 +30,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>482</width>
-        <height>410</height>
+        <width>480</width>
+        <height>408</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -52,12 +52,18 @@
            <property name="text">
             <string>Developer build</string>
            </property>
+           <property name="tristate">
+            <bool>true</bool>
+           </property>
           </widget>
          </item>
          <item>
           <widget class="QCheckBox" name="checkBoxStatic">
            <property name="text">
             <string>Static build</string>
+           </property>
+           <property name="tristate">
+            <bool>true</bool>
            </property>
           </widget>
          </item>
@@ -66,12 +72,18 @@
            <property name="text">
             <string>Compile libs in debug and release mode</string>
            </property>
+           <property name="tristate">
+            <bool>true</bool>
+           </property>
           </widget>
          </item>
          <item>
           <widget class="QCheckBox" name="checkBoxReleaseTools">
            <property name="text">
             <string>Compile tools in release mode</string>
+           </property>
+           <property name="tristate">
+            <bool>true</bool>
            </property>
           </widget>
          </item>
@@ -94,6 +106,9 @@
            <property name="text">
             <string>Build for debugging</string>
            </property>
+           <property name="tristate">
+            <bool>true</bool>
+           </property>
           </widget>
          </item>
          <item>
@@ -101,12 +116,18 @@
            <property name="text">
             <string>Force debug info</string>
            </property>
+           <property name="tristate">
+            <bool>true</bool>
+           </property>
           </widget>
          </item>
          <item>
           <widget class="QCheckBox" name="checkBoxSeprateDebugInfo">
            <property name="text">
             <string>Seprate debug info</string>
+           </property>
+           <property name="tristate">
+            <bool>true</bool>
            </property>
           </widget>
          </item>
@@ -129,12 +150,18 @@
            <property name="text">
             <string>Optimize for size</string>
            </property>
+           <property name="tristate">
+            <bool>true</bool>
+           </property>
           </widget>
          </item>
          <item>
           <widget class="QCheckBox" name="checkBoxOptimizeDebug">
            <property name="text">
             <string>Optimize debug</string>
+           </property>
+           <property name="tristate">
+            <bool>true</bool>
            </property>
           </widget>
          </item>
