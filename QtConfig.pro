@@ -128,8 +128,14 @@ FORMS += \
         ui/saveconfirmdialog.ui
 
 # Default rules for deployment.
-qnx: target.path = /tmp/$${TARGET}/bin
-else: unix:!android: target.path = /opt/$${TARGET}/bin
+
+defined(INSTALL_PATH, var) {
+    message(Install path is set)
+    target.path = $$INSTALL_PATH
+} else {
+    qnx: target.path = /tmp/$${TARGET}/bin
+    else: unix:!android: target.path = /opt/$${TARGET}/bin
+}
 !isEmpty(target.path): INSTALLS += target
 
 exists(3rdparty/webrequest/WebRequest.pri) {
