@@ -64,13 +64,13 @@ jobs:
           ${{steps.qt.outputs.make}} install
           
       - name: Build installer for linux
-        if: matrix.osname == 'linux'
+        if: matrix.osname != ''
         run: |
-            installer/init-linux.sh ${{steps.qt.outputs.qtdir}} qtconfig-${{matrix.osname}}
+            installer/init ${{steps.qt.outputs.qtdir}} ${{matrix.osname}} ${{matrix.arch}}
             
       - name: upload app to releases
         uses: Skycoder42/action-upload-release@master
-        if: startsWith(github.ref, 'refs/tags/') && (matrix.osname != '')
+        if: startsWith(github.ref, 'refs/tags/') && (matrix.osname == 'linux' || matrix.osname == 'macos')
         with:
           repo_token: ${{secrets.GITHUB_TOKEN}}
           directory: installer/${{matrix.osname}}/output
