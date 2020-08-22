@@ -73,7 +73,7 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/') && (matrix.osname != '')
         with:
           repo_token: ${{secrets.GITHUB_TOKEN}}
-          directory: installer/output
+          directory: installer/${{matrix.osname}}/output
           platform: ${{matrix.platform}}
           asset_name: qtconfig-${{matrix.osname}}-$${{matrix.arch}}
           tag: ${{github.ref}}
