@@ -15,7 +15,7 @@ data_path="$pwd/packages/ir.tooska.confiqt/data"
 mkdir $out_path
 
 # copy files
-cp QtConfig %data_path% 
+cp QtConfig $data_path
 
 # make setup
 binary_creator=$(ls $qt_path/Tools/QtInstallerFramework/*/bin/binarycreator | head -1)
