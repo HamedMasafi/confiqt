@@ -15,8 +15,8 @@ rem create_paths
 mkdir %out_path%
 
 rem  copy files
-xcopy /y /q QtConfig.exe %data_path% 
+xcopy /y /q %pwd\..\QtConfig.exe %data_path% 
 
 rem  make setup
-binary_creator=%qt_path%\Tools\QtInstallerFramework\3.2\bin\binarycreator.exe
-$binary_creator -c %pwd%/config.xml -p %pwd%/packages %out_path%/qtconfig-%platform%-%arch%.exe
+set binary_creator=%qt_path%\Tools\QtInstallerFramework\3.2\bin\binarycreator.exe
+%binary_creator% -c %pwd%/config.xml -p %pwd%/packages %out_path%/qtconfig-%platform%-%arch%.exe
