@@ -1,0 +1,22 @@
+#!/bin/sh
+
+
+# init QT_PATH PLATFORM ARCH
+
+qt_path=$1
+platform=$2
+arch=$3
+
+pwd="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+out_path=$pwd/output
+data_path="$pwd/packages/ir.tooska.confiqt/data"
+
+# create paths
+mkdir $out_path
+
+# copy files
+cp QtConfig $data_path
+
+# make setup
+binary_creator=$(ls $qt_path/Tools/QtInstallerFramework/*/bin/binarycreator | head -1)
+$binary_creator -c $pwd/config.xml -p $pwd/packages $out_path/qtconfig-$platform-$arch
