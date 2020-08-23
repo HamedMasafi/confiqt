@@ -14,8 +14,6 @@ jobs:
           - gcc_64
           - msvc2019
           - msvc2019_64
-          - mingw81_64
-          - mingw81_32
           - clang_64
 
         include:
@@ -31,12 +29,6 @@ jobs:
             os: windows-latest
             osname: windows
             arch: x86
-          - platform: mingw81_64
-            os: windows-latest
-            arch: x86_64
-          - platform: mingw81_32
-            os: windows-latest
-            arch: x86_64
           - platform: clang_64
             os: macos-latest
             osname: macos
@@ -63,14 +55,13 @@ jobs:
           ${{steps.qt.outputs.make}}
           ${{steps.qt.outputs.make}} install
           
-      - name: Build installer for linux
-        if: matrix.osname != ''
+      - name: Build installer
         run: |
             installer/init ${{steps.qt.outputs.qtdir}} ${{matrix.osname}} ${{matrix.arch}}
             
       - name: upload app to releases
         uses: Skycoder42/action-upload-release@master
-        if: startsWith(github.ref, 'refs/tags/') && (matrix.osname == 'linux' || matrix.osname == 'macos')
+        if: startsWith(github.ref, 'refs/tags/')
         with:
           repo_token: ${{secrets.GITHUB_TOKEN}}
           directory: installer/${{matrix.osname}}/output
