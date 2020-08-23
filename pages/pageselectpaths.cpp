@@ -13,7 +13,7 @@ PageSelectPaths::PageSelectPaths(ConfigManager *config, QWidget *parent)
     setupUi(this);
     labelDefaultMkspec->setText(_config->defaultPlatform());
 
-    QSettings set;
+    QSettings set(QSettings::UserScope);
     lineEditSourcePath->setText(set.value("sourcePath", "").toString());
     lineEditBuildPath->setText(set.value("buildPath", "").toString());
     lineEditInstallPath->setText(set.value("installPath", "").toString());
@@ -56,7 +56,7 @@ bool PageSelectPaths::validatePage()
     _config->setBuildPath(lineEditBuildPath->text());
     _config->setInstallPath(lineEditInstallPath->text());
 
-    QSettings set;
+    QSettings set(QSettings::UserScope);
     set.setValue("sourcePath", lineEditSourcePath->text());
     set.setValue("buildPath", lineEditBuildPath->text());
     set.setValue("installPath", lineEditInstallPath->text());
